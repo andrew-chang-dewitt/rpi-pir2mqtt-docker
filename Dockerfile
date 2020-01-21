@@ -15,7 +15,7 @@ Run apk add --no-cache --virtual build-deps alpine-sdk python3-dev && \
 # 
 
 RUN mkdir -p /app
-COPY sense.py /app/sense.py
+COPY app/sense.py /app/sense.py
 RUN chmod +x /app/sense.py
 
 #

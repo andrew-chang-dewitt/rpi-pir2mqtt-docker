@@ -6,6 +6,7 @@
 import os
 import time
 from datetime import datetime
+import json
 import RPi.GPIO as GPIO
 import paho.mqtt.client as mqtt
 
@@ -62,7 +63,15 @@ SENSOR_ID = os.getenv('SENSOR_ID', 'test_sensor')
 topic = "security/motion_sensors/" + SENSOR_ID
 def motion(PIR_PIN):
   log("motion detected, sending mqtt event to {topic}".format(topic=topic))
-  mqttc.publish(topic, timestamp() + ": motion detected")
+  res = {
+    'timestamp': timestamp(),
+    'message': "motion detected at {SENSOR_ID}".format(
+        SENSOR_ID=SENSOR_ID
+    ),
+    'motion': True
+  }
+
+  mqttc.publish(topic, json.dumps(res))
 
 try:
   log("Adding GPIO listener on {PIR_PIN}".format(PIR_PIN=PIR_PIN))

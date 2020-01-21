@@ -23,7 +23,7 @@ RUN chmod +x /app/sense.py
 # 
 ENV MQTT_HOST="127.0.0.1"
 ENV MQTT_PORT=1883
-ENV SENSOR_ID="living_room_motion"
+ENV SENSOR_ID="default_test"
 
 #
 # Remove build-deps

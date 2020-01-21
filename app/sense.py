@@ -35,6 +35,8 @@ def motion(pin):
         sensor_id = configs.A_NAME
     elif pin == configs.B_PIN:
         sensor_id = configs.B_NAME
+    else:
+        throw ValueError("this should be impossible")
 
     topic = "security/motion_sensors/" + sensor_id
     utils.log("motion detected, sending mqtt event to {topic}".format(topic=topic))

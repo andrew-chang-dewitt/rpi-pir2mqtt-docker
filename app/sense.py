@@ -44,7 +44,7 @@ def motion(pin_returned):
             "motion detected on pin {pin_returned}, "
             "sending mqtt event to {topic}"
             .format(
-                pin_returned=pin_returned
+                pin_returned=pin_returned,
                 topic=topic))
     res = {
         'timestamp': utils.timestamp(),

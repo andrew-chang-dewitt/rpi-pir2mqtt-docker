@@ -42,7 +42,7 @@ def motion(pin_returned):
         'timestamp': utils.timestamp(),
     }
 
-    mqtt.publish(topic, json.dumps(res))
+    mqtt.publish(topic, json.dumps(res), retain=True)
 
 try:
     gpio.listen(motion)

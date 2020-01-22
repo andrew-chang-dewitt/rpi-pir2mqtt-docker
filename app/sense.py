@@ -37,6 +37,7 @@ def motion(pin_returned):
             pin_returned=pin_returned,
             topic=topic))
     res = {
+        'id' : sensor_id,
         'timestamp': utils.timestamp(),
         'motion': gpio.is_rising(pin_returned)
     }

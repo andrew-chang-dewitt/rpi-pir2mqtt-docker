@@ -28,7 +28,7 @@ mqtt = MqttHelper(configs).connect()
 #
 def motion(pin_returned):
     sensor_id = gpio.PINS[pin_returned]
-    topic = "security/motion_sensors/" + sensor_id
+    topic = configs.TOPIC + sensor_id
 
     utils.log(
         "change detected on pin {pin_returned}, "
@@ -44,9 +44,15 @@ def motion(pin_returned):
 
     mqtt.publish(topic, json.dumps(res), retain=True)
 
+def fault_signal(fault_state):
+    mqtt.publish(configs.TOPIC + "fault", fault_state, retain=True)
+
+fault_signal(True)
+
 try:
     gpio.listen(motion)
 
 except KeyboardInterrupt:
+    fault_signal(True)
     gpio.stop()
     mqtt.disconnect()

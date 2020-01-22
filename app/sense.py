@@ -38,8 +38,8 @@ def motion(pin_returned):
             topic=topic))
     res = {
         'id' : sensor_id,
-        'timestamp': utils.timestamp(),
         'motion': gpio.is_rising(pin_returned)
+        'timestamp': utils.timestamp(),
     }
 
     mqtt.publish(topic, json.dumps(res))

@@ -50,7 +50,7 @@ def fault_signal(fault_state):
 fault_signal(True)
 
 try:
-    gpio.listen(motion)
+    gpio.listen(motion, fault_signal)
 
 except KeyboardInterrupt:
     fault_signal(True)

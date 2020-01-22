@@ -46,8 +46,31 @@ def motion_detected(pin_returned):
 
     mqtt.publish(topic, json.dumps(res))
 
+def motion_stopped(pin_returned):
+    sensor_id = gpio.PINS[pin_returned]
+    if sensor_id is None:
+        raise ValueError("The returned pin is invalid")
+
+    topic = "security/motion_sensors/" + sensor_id
+    utils.log(
+        "motion stopped on pin {pin_returned}, "
+        "sending mqtt event to {topic}"
+        .format(
+            pin_returned=pin_returned,
+            topic=topic))
+    res = {
+        'timestamp': utils.timestamp(),
+        'message': "motion stopped at {sensor_id}".format(sensor_id=sensor_id),
+        'motion': False
+    }
+
+    mqtt.publish(topic, json.dumps(res))
+
+
 try:
-    gpio.listen(motion_detected)
+    gpio.add_listener(True, motion_detected)
+    gpio.add_listener(False, motion_stopped)
+    gpio.listen()
 
 except KeyboardInterrupt:
     gpio.stop()

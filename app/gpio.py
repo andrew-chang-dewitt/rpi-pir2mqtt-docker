@@ -20,10 +20,22 @@ class GpioHelper:
         for pin in self.PINS.keys():
             GPIO.setup(pin, GPIO.IN)
 
-    def listen(self, callback):
+        self.listeners = []
+
+    def add_listener(self, rising, callback):
+        self.listeners.append({
+            'direction' : rising,
+            'callback' : callback
+        })
+
+    def listen(self):
         for pin in self.PINS.keys():
-            utils.log("Adding GPIO listener on {pin}".format(pin=pin))
-            GPIO.add_event_detect(pin, GPIO.RISING, callback=callback)
+            utils.log("Starting GPIO listeners on {pin}".format(pin=pin))
+
+            for listener in self.listeners:
+                direction = GPIO.RISING if listener['direction'] else GPIO.FALLING
+                GPIO.add_event_detect(pin, direction, callback=listener['callback'])
+                utils.log("{direction} listener started".format(direction=direction))
 
         utils.log("Waiting for motion detection")
         while 1:

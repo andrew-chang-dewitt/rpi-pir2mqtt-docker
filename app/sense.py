@@ -41,11 +41,11 @@ def motion(pin_returned):
 
     topic = "security/motion_sensors/" + sensor_id
     utils.log(
-            "motion detected on pin {pin_returned}, "
-            "sending mqtt event to {topic}"
-            .format(
-                pin_returned=pin_returned,
-                topic=topic))
+        "motion detected on pin {pin_returned}, "
+        "sending mqtt event to {topic}"
+        .format(
+            pin_returned=pin_returned,
+            topic=topic))
     res = {
         'timestamp': utils.timestamp(),
         'message': "motion detected at {sensor_id}".format(sensor_id=sensor_id),

@@ -34,6 +34,12 @@ class GpioHelper:
 
             for listener in self.listeners:
                 direction = GPIO.RISING if listener['direction'] else GPIO.FALLING
+                utils.log(
+                    "trying to add {direction} to {pin}"
+                    .format(
+                        direction=listener['direction'],
+                        pin=pin))
+
                 GPIO.add_event_detect(pin, direction, callback=listener['callback'])
                 utils.log("{direction} listener started".format(direction=direction))
 

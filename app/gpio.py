@@ -23,7 +23,7 @@ class GpioHelper:
     def listen(self, callback):
         for pin in self.PINS.keys():
             utils.log("Adding GPIO listener on {pin}".format(pin=pin))
-            GPIO.add_event_detect(pin, GPIO.RISING, callback=callback)
+            GPIO.add_event_detect(pin, GPIO.BOTH, callback=callback)
 
         utils.log("Waiting for motion detection")
         while 1:
@@ -33,3 +33,7 @@ class GpioHelper:
         utils.log("\nQuitting motion detection...")
         GPIO.cleanup()
         utils.log("GPIO event detection stopped & cleaned")
+
+    @staticmethod
+    def is_rising(pin):
+        return bool(GPIO.input(pin))

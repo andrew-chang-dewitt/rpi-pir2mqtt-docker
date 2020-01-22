@@ -26,28 +26,26 @@ mqtt = MqttHelper(configs).connect()
 #
 # With MQTT connection established, handle PIR sensor
 #
-def motion_detected(pin_returned):
+def motion(pin_returned):
     sensor_id = gpio.PINS[pin_returned]
-    if sensor_id is None:
-        raise ValueError("The returned pin is invalid")
-
     topic = "security/motion_sensors/" + sensor_id
+
     utils.log(
-        "motion detected on pin {pin_returned}, "
+        "change detected on pin {pin_returned}, "
         "sending mqtt event to {topic}"
         .format(
             pin_returned=pin_returned,
             topic=topic))
     res = {
+        'id' : sensor_id,
+        'motion': gpio.is_rising(pin_returned),
         'timestamp': utils.timestamp(),
-        'message': "motion detected at {sensor_id}".format(sensor_id=sensor_id),
-        'motion': True
     }
 
     mqtt.publish(topic, json.dumps(res))
 
 try:
-    gpio.listen(motion_detected)
+    gpio.listen(motion)
 
 except KeyboardInterrupt:
     gpio.stop()

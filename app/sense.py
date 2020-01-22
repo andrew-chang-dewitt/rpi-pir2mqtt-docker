@@ -12,14 +12,18 @@ import utils
 from mqtt import MqttHelper
 
 #
-# basic logging utilities
+# setup GPIO pins
 #
-#
-# setup GPIO pin
-#
-PIR_PIN = configs.A_PIN
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(PIR_PIN, GPIO.IN)
+
+PINS = {}
+if configs.A_PIN is not None:
+    PINS[configs.A_PIN] = configs.A_NAME
+if configs.B_PIN is not None:
+    PINS[configs.B_PIN] = configs.B_NAME
+
+for pin in PINS.keys():
+    GPIO.setup(pin, GPIO.IN)
 
 #
 # setup mqtt client, then
@@ -30,13 +34,10 @@ mqtt = MqttHelper(configs).connect()
 #
 # With MQTT connection established, handle PIR sensor
 #
-def motion(pin):
-    if pin == configs.A_PIN:
-        sensor_id = configs.A_NAME
-    elif pin == configs.B_PIN:
-        sensor_id = configs.B_NAME
-    else:
-        throw ValueError("this should be impossible")
+def motion(pin_returned):
+    sensor_id = PINS[pin_returned]
+    if sensor_id is None:
+        raise ValueError("The returnec pin is invalid")
 
     topic = "security/motion_sensors/" + sensor_id
     utils.log("motion detected, sending mqtt event to {topic}".format(topic=topic))
@@ -49,11 +50,14 @@ def motion(pin):
     mqtt.publish(topic, json.dumps(res))
 
 try:
-    utils.log("Adding GPIO listener on {PIR_PIN}".format(PIR_PIN=PIR_PIN))
-    GPIO.add_event_detect(PIR_PIN, GPIO.RISING, callback=motion)
+    for pin in PINS.keys():
+        utils.log("Adding GPIO listener on {pin}".format(pin=pin))
+        GPIO.add_event_detect(pin, GPIO.RISING, callback=motion)
+
     utils.log("Waiting for motion detection")
     while 1:
         time.sleep(3600)
+
 except KeyboardInterrupt:
     utils.log("\nQuitting motion detection...")
     GPIO.cleanup()

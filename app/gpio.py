@@ -36,4 +36,4 @@ class GpioHelper:
 
     @staticmethod
     def is_rising(pin):
-        return GPIO.input(pin)
+        return bool(GPIO.input(pin))

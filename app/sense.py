@@ -28,7 +28,7 @@ mqtt = MqttHelper(configs).connect()
 #
 def motion(pin_returned):
     sensor_id = gpio.PINS[pin_returned]
-    topic = configs.TOPIC + "/" + sensor_id
+    topic = configs.TOPIC + sensor_id
     motion = "MOTION" if gpio.is_rising(pin_returned) else "CLEAR"
 
     utils.log(
@@ -51,15 +51,18 @@ def motion(pin_returned):
 
 def fault_signal(fault_state):
     res = "OK" if fault_state else "FAILED"
+    topic = configs.TOPIC + "fault"
 
     utils.log(
-        "fault state set to {res}"
+        "fault state set to {res}, "
+        "sending mqtt event to {topic}"
         .format(
-            res=res
+            res=res,
+            topic=topic
         )
     )
 
-    mqtt.publish(configs.TOPIC + "/fault", res, retain=True)
+    mqtt.publish(topic, res, retain=True)
 
 fault_signal(False)
 

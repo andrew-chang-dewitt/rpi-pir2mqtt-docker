@@ -26,14 +26,14 @@ class GpioHelper:
             GPIO.add_event_detect(pin, GPIO.BOTH, callback=callback)
 
         utils.log("Waiting for motion detection")
-        fault_signal(False)
 
         while 1:
+            fault_signal(True)
             time.sleep(6000)
-            fault_signal(False)
 
     def stop(self):
         utils.log("\nQuitting motion detection...")
+        fault_signal(False)
         GPIO.cleanup()
         utils.log("GPIO event detection stopped & cleaned")
 

@@ -1,3 +1,5 @@
+qemu*/
+qemu-arm-static
 custom_configs.py
 
 .envrc

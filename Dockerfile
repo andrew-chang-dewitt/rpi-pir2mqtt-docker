@@ -1,4 +1,7 @@
 FROM armhf/alpine:latest
+# fix arm build issues on x86 platforms
+COPY qemu-arm-static /user/bin
+
 MAINTAINER Andrew Chang-DeWitt
 
 #

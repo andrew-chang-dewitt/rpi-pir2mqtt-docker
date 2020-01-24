@@ -5,6 +5,7 @@
 #
 import time
 import json
+drom threading import Event
 import RPi.GPIO as GPIO
 
 import configs
@@ -12,6 +13,7 @@ import utils
 from mqtt import MqttHelper
 from gpio import GpioHelper
 
+exit = Event()
 #
 # setup GPIO pins
 #
@@ -75,10 +77,34 @@ def fault_signal(fault_state):
 
 fault_signal("FAILED")
 
-try:
-    gpio.listen(motion, fault_signal)
+def main():
+    # setup inside loop checking for
+    # end signals
+    while not exit.is_set():
+        gpio.start(motion, fault_signal)
+        fault_signal("OK")
+        exit.wait(6000)
 
-except KeyboardInterrupt:
+    # cleanup
     fault_signal("FAILED")
     gpio.stop()
     mqtt.disconnect()
+
+def quit(signo, _frame):
+    utils.log(
+        "Interrupted by {signo}, shutting down"
+        .format(signo=signo)
+    )
+    exit.set()
+
+if __name__ == "__main__":
+    import signal
+
+    for sig in ('TERM', 'HUP', 'INT'):
+        signal.signal(
+            getattr(
+                signal, 'SIG'+sig),
+            quit
+        )
+
+    main()

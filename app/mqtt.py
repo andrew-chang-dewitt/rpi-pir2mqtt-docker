@@ -26,15 +26,16 @@ class MqttHelper:
             utils.log("Waiting for connection")
             time.sleep(1)
 
-        return self._client
+        return self
 
     def disconnect(self):
+        utils.log("Disconnecting MQTT client...")
         self._client.loop_stop()
         self._client.disconnect()
         self._client.connected_flag = False
-        log("MQTT client disonnected")
+        utils.log("MQTT client disonnected")
 
-        return self._client
+        return self
 
     def _on_connect(self, client, userdata, flags, rc):
         if rc==0:
@@ -54,3 +55,6 @@ class MqttHelper:
                     MQTT_PORT=self._MQTT_PORT))
 
             utils.log("Failure reason code: {rc}".format(rc=rc))
+
+    def __getattr__(self, attr):
+        return getattr(self._client, attr)

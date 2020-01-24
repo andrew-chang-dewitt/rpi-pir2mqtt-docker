@@ -4,10 +4,10 @@ TOPIC = "/security/motion_sensors/"
 
 SENSOR_A = {
     "pin": 7,
-    "name": "test A"
+    "name": "sensor_A"
 }
 
 SENSOR_B = {
     "pin": 8,
-    "name": "test B"
+    "name": "sensor_B"
 }

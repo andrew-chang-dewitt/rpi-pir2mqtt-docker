@@ -65,7 +65,7 @@ class App:
         }
 
         utils.log(
-            "fault state set to {state}"
+            "fault state set to {state}, "
             "sending mqtt event to {topic}"
             .format(
                 state=state,

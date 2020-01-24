@@ -50,9 +50,12 @@ def motion(pin_returned):
     mqtt.publish(topic, json.dumps(res), retain=True)
 
 def fault_signal(fault_state):
-    res = "OK" if fault_state else "FAILED"
-    topic = configs.TOPIC + "fault"
+    if fault_state == "FAILED" or fault_state == "OK":
+        res = fault_state
+    else:
+        raise ValueError("'{fault_state}' is not a valid input for `fault_signal()`")
 
+    topic = configs.TOPIC + "fault"
     utils.log(
         "fault state set to {res}, "
         "sending mqtt event to {topic}"
@@ -64,12 +67,12 @@ def fault_signal(fault_state):
 
     mqtt.publish(topic, res, retain=True)
 
-fault_signal(False)
+fault_signal("FAILED")
 
 try:
     gpio.listen(motion, fault_signal)
 
 except KeyboardInterrupt:
-    fault_signal(True)
+    fault_signal("FAILED")
     gpio.stop()
     mqtt.disconnect()

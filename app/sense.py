@@ -81,7 +81,7 @@ def main():
     # setup inside loop checking for
     # end signals
     while not exit.is_set():
-        gpio.start(motion, fault_signal)
+        gpio.start(motion)
         fault_signal("OK")
         exit.wait(6000)
 

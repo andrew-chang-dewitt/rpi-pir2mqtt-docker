@@ -28,7 +28,7 @@ class GpioHelper:
         utils.log("Waiting for motion detection")
 
     def stop(self):
-        utils.log("\nQuitting motion detection...")
+        utils.log("Quitting motion detection...")
         GPIO.cleanup()
         utils.log("GPIO event detection stopped & cleaned")
 

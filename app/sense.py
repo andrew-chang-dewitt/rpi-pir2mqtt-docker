@@ -97,8 +97,11 @@ def quit(signo, _frame):
     )
     exit.set()
 
+utils.log("{n} is __name__".format(n=__name__))
+
 if __name__ == "__main__":
     import signal
+    utils.log("Registering signal handlers")
 
     for sig in ('TERM', 'HUP', 'INT'):
         signal.signal(
@@ -107,4 +110,5 @@ if __name__ == "__main__":
             quit
         )
 
+        utils.log("Starting app")
     main()

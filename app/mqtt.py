@@ -32,7 +32,7 @@ class MqttHelper:
         self._client.loop_stop()
         self._client.disconnect()
         self._client.connected_flag = False
-        log("MQTT client disonnected")
+        utils.log("MQTT client disonnected")
 
         return self._client
 

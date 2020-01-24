@@ -5,6 +5,7 @@
 #
 import time
 import json
+import signal
 from threading import Event
 import RPi.GPIO as GPIO
 
@@ -15,15 +16,14 @@ from gpio import GpioHelper
 
 class App:
     def __init__(self):
-        self.exit = Event() #
+        # initilize running variable for tracking quit state
+        self.exit = False
+
         # setup GPIO pins
-        #
         self.gpio = GpioHelper(configs.SENSOR_A, configs.SENSOR_B)
 
-        #
         # setup mqtt client, then
         # initialize mqtt connection & begin loop
-        #
         self.mqtt = MqttHelper(configs).connect()
         self.fault_signal("FAILED")
 
@@ -79,43 +79,36 @@ class App:
         def cb(pin_returned):
             return self.motion(pin_returned)
 
-        while not self.exit.is_set():
+        while not self.exit:
             self.gpio.start(cb)
             self.fault_signal("OK")
-            self.exit.wait()
+            time.sleep(600)
+
+
+    def quit(self):
+        utils.log("quit signal received in App")
+        self.exit = True
 
         # cleanup
         self.fault_signal("FAILED")
         self.gpio.stop()
         self.mqtt.disconnect()
 
-    def quit(self):
-        def cb(signo, _frame):
-            utils.log(
-                "Interrupted by {signo}, shutting down"
-                .format(signo=signo)
-            )
-            self.exit.set()
-
-        return cb
-
-utils.log("{n} is __name__".format(n=__name__))
-
-if __name__ == "__main__":
-    import signal
-
-    app = App()
-
-    utils.log("Registering signal handlers")
-
-    signal.signal(
-        signal.SIGINT,
-        app.quit()
-    )
-    signal.signal(
-        signal.SIGTERM,
-        app.quit()
+def sig_handler(signo, _frame):
+    utils.log(
+        "Interrupted by {signo}, shutting down"
+        .format(signo=signo)
     )
 
+    APP.quit()
+
+APP = App()
+utils.log("Registering signal handlers")
+signal.signal(signal.SIGTERM, sig_handler)
+
+try:
     utils.log("Starting app")
-    app.main()
+    APP.main()
+except SystemExit:
+    utils.log("SystemExit caught, quitting")
+    APP.quit()

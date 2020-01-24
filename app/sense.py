@@ -5,6 +5,7 @@
 #
 import time
 import json
+from threading import Event
 import RPi.GPIO as GPIO
 
 import configs
@@ -12,6 +13,7 @@ import utils
 from mqtt import MqttHelper
 from gpio import GpioHelper
 
+exit = Event()
 #
 # setup GPIO pins
 #
@@ -51,28 +53,58 @@ def motion(pin_returned):
 
 def fault_signal(fault_state):
     if fault_state == "FAILED" or fault_state == "OK":
-        res = fault_state
+        state = fault_state
     else:
         raise ValueError("'{fault_state}' is not a valid input for `fault_signal()`")
 
     topic = configs.TOPIC + "fault"
+    res = {
+        'id': 'fault',
+        'state': state,
+        'timestamp': utils.timestamp(),
+    }
+
     utils.log(
-        "fault state set to {res}, "
+        "fault state set to {state}"
         "sending mqtt event to {topic}"
         .format(
-            res=res,
-            topic=topic
+            state=state,
+            topic=topic,
         )
     )
 
-    mqtt.publish(topic, res, retain=True)
+    mqtt.publish(topic, json.dumps(res), retain=True)
 
 fault_signal("FAILED")
 
-try:
-    gpio.listen(motion, fault_signal)
+def main():
+    # setup inside loop checking for
+    # end signals
+    while not exit.is_set():
+        gpio.start(motion, fault_signal)
+        fault_signal("OK")
+        exit.wait(6000)
 
-except KeyboardInterrupt:
+    # cleanup
     fault_signal("FAILED")
     gpio.stop()
     mqtt.disconnect()
+
+def quit(signo, _frame):
+    utils.log(
+        "Interrupted by {signo}, shutting down"
+        .format(signo=signo)
+    )
+    exit.set()
+
+if __name__ == "__main__":
+    import signal
+
+    for sig in ('TERM', 'HUP', 'INT'):
+        signal.signal(
+            getattr(
+                signal, 'SIG'+sig),
+            quit
+        )
+
+    main()

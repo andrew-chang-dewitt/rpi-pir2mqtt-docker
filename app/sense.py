@@ -86,20 +86,15 @@ class App:
 
 
     def quit(self):
-        utils.log("quit signal received in App")
         self.exit = True
 
         # cleanup
         self.fault_signal("FAILED")
         self.gpio.stop()
         self.mqtt.disconnect()
+        utils.log("rpi-pir2mqtt successfully shut down")
 
 def sig_handler(signo, _frame):
-    utils.log(
-        "Interrupted by {signo}, shutting down"
-        .format(signo=signo)
-    )
-
     APP.quit()
 
 APP = App()

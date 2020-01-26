@@ -75,12 +75,13 @@ class App:
 
         self.mqtt.publish(topic, json.dumps(res), retain=True)
 
-    def main(self):
+    def run(self):
         def cb(pin_returned):
             return self.motion(pin_returned)
 
+        self.gpio.start_listening(cb)
+
         while not self.exit:
-            self.gpio.start(cb)
             self.fault_signal("OK")
             time.sleep(600)
 
@@ -90,7 +91,7 @@ class App:
 
         # cleanup
         self.fault_signal("FAILED")
-        self.gpio.stop()
+        self.gpio.stop_listening()
         self.mqtt.disconnect()
         utils.log("rpi-pir2mqtt successfully shut down")
 
@@ -98,12 +99,16 @@ def sig_handler(signo, _frame):
     APP.quit()
 
 APP = App()
-utils.log("Registering signal handlers")
 signal.signal(signal.SIGTERM, sig_handler)
+signal.signal(signal.SIGINT, sig_handler)
 
 try:
-    utils.log("Starting app")
-    APP.main()
+    utils.log("Starting app...")
+    APP.run()
 except SystemExit:
-    utils.log("SystemExit caught, quitting")
+    utils.log("SystemExit caught, quitting...")
     APP.quit()
+except:
+    utils.log("An unexpected error has occurred, exiting app...")
+    APP.quit()
+    raise

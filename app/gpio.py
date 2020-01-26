@@ -20,14 +20,14 @@ class GpioHelper:
         for pin in self.PINS.keys():
             GPIO.setup(pin, GPIO.IN)
 
-    def start(self, callback):
+    def start_listening(self, callback):
         for pin in self.PINS.keys():
             utils.log("Adding GPIO listener on {pin}".format(pin=pin))
             GPIO.add_event_detect(pin, GPIO.BOTH, callback=callback)
 
         utils.log("Waiting for motion detection")
 
-    def stop(self):
+    def stop_listening(self):
         utils.log("Quitting motion detection...")
         GPIO.cleanup()
         utils.log("GPIO event detection stopped & cleaned")

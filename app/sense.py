@@ -83,9 +83,7 @@ class App:
 
         while not self.exit:
             self.fault_signal("OK")
-            # time.sleep(600)
-            time.sleep(30)
-            raise Exception("testing the error handler")
+            time.sleep(600)
 
 
     def quit(self):

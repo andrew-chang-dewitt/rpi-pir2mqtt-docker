@@ -101,16 +101,16 @@ def sig_handler(signo, _frame):
     APP.quit()
 
 APP = App()
-utils.log("Registering signal handlers")
 signal.signal(signal.SIGTERM, sig_handler)
+signal.signal(signal.SIGINT, sig_handler)
 
 try:
-    utils.log("Starting app")
+    utils.log("Starting app...")
     APP.run()
 except SystemExit:
-    utils.log("SystemExit caught, quitting")
+    utils.log("SystemExit caught, quitting...")
     APP.quit()
-except Exception as e:
+except:
     utils.log("An unexpected error has occurred, exiting app...")
     APP.quit()
-    raise e
+    raise

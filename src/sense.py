@@ -34,9 +34,9 @@ class App:
         self.fault_signal("FAILED")
 
     def motion(self, pin_returned):
-        sensor_id = self.gpio.PINS[pin_returned]
-        topic = self.config.root_topic + sensor_id
-        state = "MOTION" if self.gpio.is_rising(pin_returned) else "CLEAR"
+        sensor = self.config.sensors['pin_returned']
+        topic = self.config.root_topic + sensor['group'] + '/' + sensor['name']
+        state = "ALARM" if self.gpio.is_rising(pin_returned) else "OK"
 
         utils.log(
             "{state} on pin {pin_returned}, "
@@ -49,8 +49,8 @@ class App:
         )
 
         res = {
-            'id' : sensor_id,
             'state': state,
+            'sensor_data': sensor,
             'timestamp': utils.timestamp(),
         }
 

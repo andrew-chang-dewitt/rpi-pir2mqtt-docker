@@ -9,18 +9,13 @@ class GpioHelper:
         if not sensors_list:
             raise ValueError("At least one sensor must be given")
 
-        self.PINS = {}
+        self.PINS = sensors_list.keys()
 
-        for sensor in sensors_list:
-            self.PINS[sensor['pin']] = sensor['name']
-
-        GPIO.setmode(GPIO.BCM)
-
-        for pin in self.PINS.keys():
+        for pin in self.PINS:
             GPIO.setup(pin, GPIO.IN)
 
     def start_listening(self, callback):
-        for pin in self.PINS.keys():
+        for pin in self.PINS:
             utils.log("Adding GPIO listener on {pin}".format(pin=pin))
             GPIO.add_event_detect(pin, GPIO.BOTH, callback=callback)
 

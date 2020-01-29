@@ -6,12 +6,12 @@ class Config:
         self.mqtt_port = config_obj['mqtt_port']
         self.root_topic = config_obj['root_topic']
 
-        self.sensors = []
+        self.sensors = {}
 
         for (group, sensors) in config_obj['sensor_groups'].items():
             for sensor in sensors:
-                sensor['name'] = group + '/' + sensor['name']
-                self.sensors.append(sensor)
+                sensor['group'] = group
+                self.sensors[sensor['pin']] = sensor
 
     @staticmethod
     def load(config_file):

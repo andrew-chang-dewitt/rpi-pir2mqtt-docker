@@ -1,8 +1,9 @@
 mqtt_host: "127.0.0.1"
 mqtt_port: 1883
-topic: "/security/motion_sensors/"
+root_topic: "/security/motion_sensors/"
+
 sensors:
-    living_room:
+    example_group:
         sensor_a:
             "pin": 7,
             "name": "sensor_a"

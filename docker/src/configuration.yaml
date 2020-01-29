@@ -1,0 +1,11 @@
+mqtt_host: "127.0.0.1"
+mqtt_port: 1883
+topic: "/security/motion_sensors/"
+sensors:
+    living_room:
+        sensor_a:
+            "pin": 7,
+            "name": "sensor_a"
+        sensor_b:
+            "pin": 8,
+            "name": "sensor_B"

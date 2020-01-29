@@ -5,9 +5,13 @@ class Config:
         self.mqtt_host = config_obj['mqtt_host']
         self.mqtt_port = config_obj['mqtt_port']
         self.root_topic = config_obj['root_topic']
-        self.sensors = config_obj['sensors']
 
-        print(self.sensors)
+        self.sensors = []
+
+        for (group, sensors) in config_obj['sensor_groups'].items():
+            for sensor in sensors:
+                sensor['name'] = group + '/' + sensor['name']
+                self.sensors.append(sensor)
 
     @staticmethod
     def load(config_file):
@@ -16,5 +20,3 @@ class Config:
                 return Config(yaml.safe_load(stream))
             except:
                 raise
-
-Config.load('configuration.yaml')

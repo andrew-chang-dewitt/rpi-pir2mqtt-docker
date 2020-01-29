@@ -5,15 +5,14 @@ import RPi.GPIO as GPIO
 import utils
 
 class GpioHelper:
-    def __init__(self, sensor_A, sensor_B=None):
-        if sensor_A is None and sensor_B is None:
+    def __init__(self, sensors_list):
+        if not sensors_list:
             raise ValueError("At least one sensor must be given")
 
         self.PINS = {}
-        self.PINS[sensor_A["pin"]] = sensor_A["name"]
 
-        if sensor_B is not None:
-            self.PINS[sensor_B["pin"]] = sensor_B["name"]
+        for sensor in sensors_list:
+            self.PINS[sensor['pin']] = sensor['name']
 
         GPIO.setmode(GPIO.BCM)
 

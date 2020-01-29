@@ -23,9 +23,7 @@ class App:
         self.config = Config.load('configuration.yaml')
 
         # setup GPIO pins
-        self.gpio = GpioHelper(
-                self.config.sensors.example_group.sensor_a,
-                self.config.sensors.example_group.sensor_b)
+        self.gpio = GpioHelper(self.config.sensors)
 
         # setup mqtt client, then
         # initialize mqtt connection & begin loop

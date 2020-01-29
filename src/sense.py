@@ -9,8 +9,8 @@ import signal
 from threading import Event
 import RPi.GPIO as GPIO
 
-import configs
 import utils
+from configs import Config
 from mqtt import MqttHelper
 from gpio import GpioHelper
 
@@ -19,18 +19,25 @@ class App:
         # initilize running variable for tracking quit state
         self.exit = False
 
+        # load configuration
+        self.config = Config.load('configuration.yaml')
+
         # setup GPIO pins
-        self.gpio = GpioHelper(configs.SENSOR_A, configs.SENSOR_B)
+        self.gpio = GpioHelper(
+                self.config.sensors.example_group.sensor_a,
+                self.config.sensors.example_group.sensor_b)
 
         # setup mqtt client, then
         # initialize mqtt connection & begin loop
-        self.mqtt = MqttHelper(configs).connect()
-        self.fault_signal("FAILED")
+        self.mqtt = MqttHelper(
+                self.config.mqtt_host,
+                self.config.mqtt_port).connect()
 
+        self.fault_signal("FAILED")
 
     def motion(self, pin_returned):
         sensor_id = self.gpio.PINS[pin_returned]
-        topic = configs.TOPIC + sensor_id
+        topic = self.config.root_topic + sensor_id
         state = "MOTION" if self.gpio.is_rising(pin_returned) else "CLEAR"
 
         utils.log(
@@ -57,7 +64,7 @@ class App:
         else:
             raise ValueError("'{fault_state}' is not a valid input for `fault_signal()`")
 
-        topic = configs.TOPIC + "fault"
+        topic = self.config.root_topic + "fault"
         res = {
             'id': 'fault',
             'state': state,

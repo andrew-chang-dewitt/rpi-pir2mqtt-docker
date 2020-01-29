@@ -5,8 +5,10 @@ root_topic: "/security/motion_sensors/"
 sensors:
     example_group:
         sensor_a:
+            "type": "motion"
             "pin": 7,
             "name": "sensor_a"
         sensor_b:
+            "type": "door-window"
             "pin": 8,
             "name": "sensor_B"

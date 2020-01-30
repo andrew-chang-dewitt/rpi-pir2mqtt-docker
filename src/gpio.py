@@ -9,10 +9,19 @@ class GpioHelper:
         if not sensors_list:
             raise ValueError("At least one sensor must be given")
 
-        self.PINS = sensors_list.keys()
+        self.PINS = []
+        GPIO.setmode(GPIO.BCM)
 
-        for pin in self.PINS:
-            GPIO.setup(pin, GPIO.IN)
+        for (pin, sensor) in sensors_list.items():
+            self.PINS.append(pin)
+
+            if sensor["type"] == "reed":
+                GPIO.setup(
+                    sensor['pin'], 
+                    GPIO.IN,
+                    pull_up_down=GPIO.PUD_DOWN)
+            else:
+                GPIO.setup(sensor['pin'], GPIO.IN)
 
     def start_listening(self, callback):
         for pin in self.PINS:

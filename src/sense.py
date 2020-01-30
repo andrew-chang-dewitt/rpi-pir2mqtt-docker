@@ -10,17 +10,19 @@ from threading import Event
 import RPi.GPIO as GPIO
 
 import utils
-from configs import Config
+from configs import Configs
 from mqtt import MqttHelper
 from gpio import GpioHelper
 
 class App:
-    def __init__(self):
+    def __init__(self, error_handler):
         # initilize running variable for tracking quit state
         self.exit = False
 
+        self.error_handler = error_handler
+
         # load configuration
-        self.config = Config.load('configuration.yaml')
+        self.config = Configs.load('/src/configuration.yaml')
 
         # setup GPIO pins
         self.gpio = GpioHelper(self.config.sensors)
@@ -34,8 +36,8 @@ class App:
         self.fault_signal("FAILED")
 
     def motion(self, pin_returned):
-        sensor = self.config.sensors['pin_returned']
-        topic = self.config.root_topic + sensor['group'] + '/' + sensor['name']
+        sensor = self.config.sensors[pin_returned]
+        topic = self.config.root_topic + sensor['group'] + '/' + sensor['type'] + '/' + sensor['name']
         state = "ALARM" if self.gpio.is_rising(pin_returned) else "OK"
 
         utils.log(
@@ -82,7 +84,12 @@ class App:
 
     def run(self):
         def cb(pin_returned):
-            return self.motion(pin_returned)
+            # wrap callback in a try/except that rethrows errors to the main thread
+            # so that the app doesn't keep chugging along thinking everything is okay
+            try:
+                return self.motion(pin_returned)
+            except Exception as e:
+                self.error_handler(e, self.quit)
 
         self.gpio.start_listening(cb)
 
@@ -100,10 +107,16 @@ class App:
         self.mqtt.disconnect()
         utils.log("rpi-pir2mqtt successfully shut down")
 
+def error_handler(exception, cb):
+    utils.log("An unexpected error has occurred, exiting app...")
+    cb()
+    raise exception
+
 def sig_handler(signo, _frame):
+    utils.log("sig_handler processing quit signal")
     APP.quit()
 
-APP = App()
+APP = App(error_handler)
 signal.signal(signal.SIGTERM, sig_handler)
 signal.signal(signal.SIGINT, sig_handler)
 
@@ -113,7 +126,5 @@ try:
 except SystemExit:
     utils.log("SystemExit caught, quitting...")
     APP.quit()
-except:
-    utils.log("An unexpected error has occurred, exiting app...")
-    APP.quit()
-    raise
+except Exception as e:
+    error_handler(e, APP.quit())

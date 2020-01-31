@@ -6,32 +6,37 @@
 import time
 import json
 import signal
-from threading import Event
-import RPi.GPIO as GPIO
 
-import configs
 import utils
+from configs import Configs
 from mqtt import MqttHelper
 from gpio import GpioHelper
 
 class App:
-    def __init__(self):
+    def __init__(self, error_handler):
         # initilize running variable for tracking quit state
         self.exit = False
 
+        self.error_handler = error_handler
+
+        # load configuration
+        self.config = Configs.load('/src/configuration.yaml')
+
         # setup GPIO pins
-        self.gpio = GpioHelper(configs.SENSOR_A, configs.SENSOR_B)
+        self.gpio = GpioHelper(self.config.sensors)
 
         # setup mqtt client, then
         # initialize mqtt connection & begin loop
-        self.mqtt = MqttHelper(configs).connect()
+        self.mqtt = MqttHelper(
+                self.config.mqtt_host,
+                self.config.mqtt_port).connect()
+
         self.fault_signal("FAILED")
 
-
-    def motion(self, pin_returned):
-        sensor_id = self.gpio.PINS[pin_returned]
-        topic = configs.TOPIC + sensor_id
-        state = "MOTION" if self.gpio.is_rising(pin_returned) else "CLEAR"
+    def event_detected(self, pin_returned):
+        sensor = self.config.sensors[pin_returned]
+        topic = self.config.root_topic + sensor.topic
+        state = sensor.determine_state(self.gpio.is_rising(pin_returned))
 
         utils.log(
             "{state} on pin {pin_returned}, "
@@ -44,8 +49,8 @@ class App:
         )
 
         res = {
-            'id' : sensor_id,
             'state': state,
+            'sensor_data': sensor,
             'timestamp': utils.timestamp(),
         }
 
@@ -57,7 +62,7 @@ class App:
         else:
             raise ValueError("'{fault_state}' is not a valid input for `fault_signal()`")
 
-        topic = configs.TOPIC + "fault"
+        topic = self.config.root_topic + "fault"
         res = {
             'id': 'fault',
             'state': state,
@@ -77,7 +82,12 @@ class App:
 
     def run(self):
         def cb(pin_returned):
-            return self.motion(pin_returned)
+            # wrap callback in a try/except that rethrows errors to the main thread
+            # so that the app doesn't keep chugging along thinking everything is okay
+            try:
+                return self.event_detected(pin_returned)
+            except Exception as e:
+                self.error_handler(e, self.quit)
 
         self.gpio.start_listening(cb)
 
@@ -95,10 +105,16 @@ class App:
         self.mqtt.disconnect()
         utils.log("rpi-pir2mqtt successfully shut down")
 
+def error_handler(exception, cb):
+    utils.log("An unexpected error has occurred, exiting app...")
+    cb()
+    raise exception
+
 def sig_handler(signo, _frame):
+    utils.log("sig_handler processing quit signal")
     APP.quit()
 
-APP = App()
+APP = App(error_handler)
 signal.signal(signal.SIGTERM, sig_handler)
 signal.signal(signal.SIGINT, sig_handler)
 
@@ -108,7 +124,5 @@ try:
 except SystemExit:
     utils.log("SystemExit caught, quitting...")
     APP.quit()
-except:
-    utils.log("An unexpected error has occurred, exiting app...")
-    APP.quit()
-    raise
+except Exception as e:
+    error_handler(e, APP.quit())

@@ -3,6 +3,7 @@ import time
 import RPi.GPIO as GPIO
 
 import utils
+import sensors
 
 class GpioHelper:
     def __init__(self, sensors_list):
@@ -15,13 +16,13 @@ class GpioHelper:
         for (pin, sensor) in sensors_list.items():
             self.PINS.append(pin)
 
-            if sensor["type"] == "reed":
+            if isinstance(sensor, sensors.ReedSwitch):
                 GPIO.setup(
-                    sensor['pin'], 
+                    pin,
                     GPIO.IN,
                     pull_up_down=GPIO.PUD_DOWN)
             else:
-                GPIO.setup(sensor['pin'], GPIO.IN)
+                GPIO.setup(pin, GPIO.IN)
 
     def start_listening(self, callback):
         for pin in self.PINS:

@@ -1,17 +1,19 @@
 import yaml
 
+from sensors import build_sensor
+
 class Configs:
     def __init__(self, config_obj):
         self.mqtt_host = config_obj['mqtt_host']
         self.mqtt_port = config_obj['mqtt_port']
         self.root_topic = config_obj['root_topic']
 
-        self.sensors = {}
+        self.sensor_list = {}
 
-        for (group, sensors) in config_obj['sensor_groups'].items():
-            for sensor in sensors:
+        for (group, sensor_list) in config_obj['sensor_groups'].items():
+            for sensor in sensor_list:
                 sensor['group'] = group
-                self.sensors[sensor['pin']] = sensor
+                self.sensor_list[sensor['pin']] = build_sensor(sensor)
 
     @staticmethod
     def load(config_file):

@@ -6,8 +6,6 @@
 import time
 import json
 import signal
-from threading import Event
-import RPi.GPIO as GPIO
 
 import utils
 from configs import Configs
@@ -35,10 +33,10 @@ class App:
 
         self.fault_signal("FAILED")
 
-    def motion(self, pin_returned):
+    def event_detected(self, pin_returned):
         sensor = self.config.sensors[pin_returned]
-        topic = self.config.root_topic + sensor['group'] + '/' + sensor['type'] + '/' + sensor['name']
-        state = "ALARM" if self.gpio.is_rising(pin_returned) else "OK"
+        topic = self.config.root_topic + sensor.topic
+        state = sensor.determine_state(self.gpio.is_rising(pin_returned))
 
         utils.log(
             "{state} on pin {pin_returned}, "
@@ -87,7 +85,7 @@ class App:
             # wrap callback in a try/except that rethrows errors to the main thread
             # so that the app doesn't keep chugging along thinking everything is okay
             try:
-                return self.motion(pin_returned)
+                return self.event_detected(pin_returned)
             except Exception as e:
                 self.error_handler(e, self.quit)
 

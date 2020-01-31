@@ -103,15 +103,18 @@ sensor_groups:
 
 which will cause them to broadcast on a sub topic specific to their group, (e.g. `/security/sensors/a_group` 
 or `/security/sensors/another_group` in the example above). Then individual sensors are added to the groups 
-as a sequence, like this:
+as a sequence, specifying a sensor name (to be used in creating the final MQTT topic), a type (see types below),
+and the GPIO input pin number (using Broadcom numbering only, see 
+[more here](https://www.raspberrypi.org/documentation/usage/gpio/)) 
+like this:
 
 ```
     a_group:
       - name: "sensor_name"
-        type: # ... can be any of the supported types (see the Sensor Types section near the end of this README)
-        pin: # an integer corresponding the the GPIO input the sensor will be wired to
+        type:                # ... can be any of the supported types (see the Sensor Types section near the end of this README)
+        pin:                  # an integer corresponding the the GPIO input (Broadcom Number) the sensor will be wired to
       - name: "another_sensor"
-        type: # ...
+        type: ...
         pin: 11
         # ... and continues like above for each sensor
 ```
@@ -134,6 +137,34 @@ A simple motion sensor, so far supporting HC-SR501 style sensors (easily found o
 [ThePiHut](https://thepihut.com/products/pir-infrared-motion-sensor-hc-sr501)), 
 but it might work with any similar 3-pin, 3-5V digital PIR sensor. 
 
-Wiring of these is very simple, just connect 
+Wiring of these is very simple, just connect a 5 volt output pin to the PIR-VCC, a Ground pin to PIR-GND, & 
+the desired GPIO pin to PIR-OUT. Then just make sure to use the same GPIO pin number in the configuration file 
+(picture & example configuration below).
 
-### Door & Window Reed Switches
+![MotionSensor Wiring](https://raw.githubusercontent.com/andrew-chang-dewitt/rpi-security-gpio2mqtt/documentation/documentation/MotionSensor.png)
+
+```
+- name: "motion_sensor"
+  type: "motion" # specifying motion here tells the application how to interpret this sensor
+  pin: # ... some pin number
+```
+
+### Reed Switches
+
+A simple reed switch, tested on the Honeywell 951WG & the Honeywell 944TRE, but should work with any basic 
+Form A (Normally Open, SPST--Single Pole Single Throw) switch.
+
+Wiring is a little more complicated than a motion sensor, as a resistor is needed to protect the Pi from 
+any possible shorts (but wiring a hardware pulldown or pullup circuit is not required as the Pi's software
+version on the Broadcom chip is used instead). To wire this sensor, connect the 3.3 Volt pin to a lead on
+a resistor (anything from 1k to 5k Ohms should work), then connect the other lead to a Ground pin on the Pi. 
+Add the switch by connecting one lead between the 3.3V pin & the resistor, then connect the other lead to 
+the desired GPIO pin. See diagram & example configuration below:
+
+![ReedSwitch Wiring](https://raw.githubusercontent.com/andrew-chang-dewitt/rpi-security-gpio2mqtt/documentation/documentation/ReedSwitch.png)
+
+```
+- name: "reed switch"
+  type: "door" # a reed switch can be specified as either a 'door' or 'window' switch
+  pin: # ... desired pin #
+```

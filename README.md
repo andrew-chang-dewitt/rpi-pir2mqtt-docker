@@ -120,3 +120,20 @@ as a sequence, like this:
 
 Of course, having the application running in Docker on the Pi is useless without having the sensors wired up. 
 Instructions for each currently supported type is below.
+
+## Sensor types
+
+All tested sensor types are included below. Refer to the type for instructions on wiring & how to include 
+in `configuration.yaml`.
+
+### PIR Motion Sensor
+
+A simple motion sensor, so far supporting HC-SR501 style sensors (easily found on 
+[Amazon](https://www.amazon.com/gp/product/B012ZZ4LPM) or at electronics supply sites like 
+[Adafruit](https://www.adafruit.com/product/189) or 
+[ThePiHut](https://thepihut.com/products/pir-infrared-motion-sensor-hc-sr501)), 
+but it might work with any similar 3-pin, 3-5V digital PIR sensor. 
+
+Wiring of these is very simple, just connect 
+
+### Door & Window Reed Switches

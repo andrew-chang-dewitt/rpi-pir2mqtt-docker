@@ -127,7 +127,9 @@ Instructions for each currently supported type is below.
 ## Sensor types
 
 All tested sensor types are included below. Refer to the type for instructions on wiring & how to include 
-in `configuration.yaml`.
+in `configuration.yaml`. 
+
+If you have a sensor type that's not supported below, please submit an issue or pull request to add the sensor.
 
 ### PIR Motion Sensor
 

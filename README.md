@@ -49,5 +49,31 @@ For a more complete/complicated setup, it's advisable to have the following:
 prototyping board, but doesn't work as well for longer runs to sensor installation 
 locations due to it's liklihood to break inside the insulation)
 
-Lastly, if you want a setup that's really easy to place the raspberry pi, you can always look into Power Over 
-Ethernet or using a Pi Zero W.
+Lastly, if you want a setup that's really easy to place the raspberry pi, you can always look 
+into Power Over Ethernet or using a Pi Zero W.
+
+## Installation
+
+The easist path is to use DockerHub. On a compatible Raspberry Pi running Docker on Linux (see 
+requirements above), pull the latest image with
+
+```
+$ docker pull rpi-security-gpio2mqtt
+```
+
+then run using
+
+```
+$ docker run -itd \
+    --name rpi-security
+    --restart always
+    --privileged \
+    -v /rpi-security2mqtt/configuration.yaml:/src/configuration.yaml \
+    rpi-security-gpio2mqtt
+```
+
+This command runs the image in privilaged mode (required for GPIO access) & sets the restart parameter to 
+always for better uptime & easier management. It also maps the configuration file to a root folder for the 
+application (any location can be used, just change the part after `-v ` to the path of your choosing like 
+this `-v SOME/PATH/FILE.yaml:/src/configuration.yaml`). Mapping the configuration file to a volume allows 
+for editing of the file & restarting the container to implement changes.

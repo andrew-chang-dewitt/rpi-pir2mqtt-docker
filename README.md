@@ -54,8 +54,11 @@ into Power Over Ethernet or using a Pi Zero W.
 
 ## Installation
 
-The easist path is to use DockerHub. On a compatible Raspberry Pi running Docker on Linux (see 
-requirements above), pull the latest image with
+
+### Software
+
+The easist path to get the application up & running is to use DockerHub. On a compatible Raspberry Pi 
+running Docker on Linux (see requirements above), pull the latest image with
 
 ```
 $ docker pull rpi-security-gpio2mqtt
@@ -77,3 +80,46 @@ always for better uptime & easier management. It also maps the configuration fil
 application (any location can be used, just change the part after `-v ` to the path of your choosing like 
 this `-v SOME/PATH/FILE.yaml:/src/configuration.yaml`). Mapping the configuration file to a volume allows 
 for editing of the file & restarting the container to implement changes.
+
+Lastly, you'll need to edit the host copy (located at the first half of the volume declaration you specified
+at `docker run ... -v`). The first part to change is your MQTT settings; you'll need to tell the application 
+your MQTT host address & port number, the MQTT username & password (if using), & (optionally) the root topic 
+you want all the sensor's data to be published on.
+
+```
+mqtt_host: "host.address.here"    # must be a string, defaults to 127.0.0.1, or localhost
+mqtt_port: 1111                   # must be a number, defaults to 1883
+mqtt_user: "username"             # string, defaults to not being set
+mqtt_pass: "password"             # string, defaults to not being set
+root_topic: "/some/topic/"        # string, the last '/' is required, defaults to /security/sensors/
+```
+
+In addition to MQTT configuration, you'll need to set up the sensors. They are organized by group, like this:
+
+```
+sensor_groups:
+    a_group:
+        # ... sensors go here
+    another_group:
+        # ... more sensors here
+```
+
+which will cause them to broadcast on a sub topic specific to their group, (e.g. `/security/sensors/a_group` 
+or `/security/sensors/another_group` in the example above). Then individual sensors are added to the groups 
+as a sequence, like this:
+
+```
+    a_group:
+      - name: "sensor_name"
+        type: # ... can be any of the supported types (see the Sensor Types section near the end of this README)
+        pin: # an integer corresponding the the GPIO input the sensor will be wired to
+      - name: "another_sensor"
+        type: # ...
+        pin: 11
+        # ... and continues like above for each sensor
+```
+
+### Hardware
+
+Of course, having the application running in Docker on the Pi is useless without having the sensors wired up. 
+Instructions for each currently supported type is below.

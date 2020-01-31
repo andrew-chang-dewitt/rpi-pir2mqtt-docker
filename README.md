@@ -25,13 +25,10 @@ At minimum, the following hardware is needed:
 1. Raspberry Pi with a 40-pin GPIO header (tested on a Raspberry Pi Zero v1.3, but
 should work just as well on any version from the 1B+ through the newest 4B as well
 as the Zero W)
-2. A compatible power supply for the Raspberry Pi ([RaspberryPi.org recommends 5V & 2.5A]
-(https://www.raspberrypi.org/documentation/hardware/raspberrypi/power/README.md))
-2. A 16GB or larger micro SD card ([more here]
-(https://www.raspberrypi.org/documentation/installation/sd-cards.md))
-3. A USB network adapter, either USB to Ethernet (such as [this low-power one from MonoPrice]
-(https://www.monoprice.com/product?c_id=&cp_id=&cs_id=&p_id=9466&sep=1&format=2)), or a 
-similar wifi adapter.
+2. A compatible power supply for the Raspberry Pi ([RaspberryPi.org recommends 5V & 2.5A](https://www.raspberrypi.org/documentation/hardware/raspberrypi/power/README.md))
+2. A 16GB or larger micro SD card ([more here](https://www.raspberrypi.org/documentation/installation/sd-cards.md))
+3. A USB network adapter, either USB to Ethernet (such as [this low-power one from MonoPrice](https://www.monoprice.com/product?c_id=&cp_id=&cs_id=&p_id=9466&sep=1&format=2)),
+or a similar wifi adapter.
 2. Sensors - So far this can be any of the following types
 
   - PIR Motion (tested with the HC-SR501)

@@ -1,6 +1,6 @@
 # rpi-security-gpio2mqtt
 
-![Docker Build](https://img.shields.io/docker/build/andrewchangdewitt/rpi-security-gpio2mqtt.svg)
+![Docker Build](https://img.shields.io/docker/cloud/build/andrewchangdewitt/rpi-security-gpio2mqtt.svg)
 
 A docker image for reading GPIO input from wired home security sensors & 
 publishing a message via MQTT on a sensor detection event. Intended to be used 

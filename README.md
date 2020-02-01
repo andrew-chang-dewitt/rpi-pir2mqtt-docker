@@ -1,8 +1,12 @@
 # rpi-security-gpio2mqtt
 
-A docker image for reading GPIO input from wired home security sensors &
-publishing a message via MQTT on a sensor detection event. Intended to be used
-on a Raspberry Pi with the 40-pin GPIO header & containerized to Docker for
+![Docker Build](https://img.shields.io/docker/cloud/build/andrewchangdewitt/rpi-security-gpio2mqtt.svg)
+![PyUp](https://pyup.io/repos/github/andrew-chang-dewitt/rpi-security-gpio2mqtt/shield.svg?t=1580550872445)
+![Style](https://img.shields.io/badge/code%20style-PEP8-informational)
+
+A docker image for reading GPIO input from wired home security sensors & 
+publishing a message via MQTT on a sensor detection event. Intended to be used 
+on a Raspberry Pi with the 40-pin GPIO header & containerized to Docker for 
 easy installation & management.
 
 Getting up and running is fairly simple, but it does have a few hardware & software

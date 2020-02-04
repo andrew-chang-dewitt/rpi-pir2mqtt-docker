@@ -16,13 +16,10 @@ class GpioHelper:
         for (pin, sensor) in sensors_list.items():
             self.PINS.append(pin)
 
-            if isinstance(sensor, sensors.ReedSwitch):
-                GPIO.setup(
-                    pin,
-                    GPIO.IN,
-                    pull_up_down=GPIO.PUD_DOWN)
-            else:
-                GPIO.setup(pin, GPIO.IN)
+            GPIO.setup(
+                pin,
+                GPIO.IN,
+                pull_up_down=self._need_pull_down(sensor))
 
     def start_listening(self, callback):
         for pin in self.PINS:
@@ -39,3 +36,10 @@ class GpioHelper:
     @staticmethod
     def is_rising(pin):
         return bool(GPIO.input(pin))
+
+    @staticmethod
+    def _need_pull_down(sensor):
+        if isinstance(sensor, sensors.ReedSwitch):
+            return GPIO.PUD_DOWN
+        else:
+            return None

@@ -1,6 +1,7 @@
 # rpi-security-gpio2mqtt
 
 ![Docker Build](https://img.shields.io/docker/cloud/build/andrewchangdewitt/rpi-security-gpio2mqtt.svg)
+[![Build Status](https://travis-ci.com/andrew-chang-dewitt/rpi-security-gpio2mqtt.svg?branch=master)](https://travis-ci.com/andrew-chang-dewitt/rpi-security-gpio2mqtt)
 ![PyUp](https://pyup.io/repos/github/andrew-chang-dewitt/rpi-security-gpio2mqtt/shield.svg?t=1580550872445)
 ![Style](https://img.shields.io/badge/code%20style-PEP8-informational)
 

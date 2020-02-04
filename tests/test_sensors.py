@@ -1,6 +1,6 @@
 import pytest
 
-from src.sensors import build_sensor, Sensor, MotionSensor, ReedSwitch
+from .src.sensors import build_sensor, Sensor, MotionSensor, ReedSwitch
 
 @pytest.fixture
 def raw_motion():

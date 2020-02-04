@@ -1,6 +1,6 @@
 import yaml
 
-from sensors import build_sensor
+from .sensors import build_sensor
 
 class Configs:
     def __init__(self, config_obj):

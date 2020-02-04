@@ -12,30 +12,21 @@ def raw_motion():
     }
 
 @pytest.fixture
-def raw_door():
-    return {
-        'type': 'door',
-        'name': 'sensor',
-        'group': 'a group',
-        'pin': 7,
-    }
+def raw_door(raw_motion):
+    raw_motion['type'] = 'door'
+
+    return raw_motion
 
 @pytest.fixture
-def raw_window():
-    return {
-        'type': 'window',
-        'name': 'sensor',
-        'group': 'a group',
-        'pin': 7,
-    }
+def raw_window(raw_motion):
+    raw_motion['type'] = 'window'
+
+    return raw_motion
 
 @pytest.fixture
-def default_sensor():
-    return build_sensor({
-        'name': 'sensor',
-        'group': 'a group',
-        'pin': 7,
-    })
+def default_sensor(raw_motion):
+    del raw_motion['type']
+    return build_sensor(raw_motion)
 
 
 @pytest.fixture

@@ -13,11 +13,12 @@ Run apk add --no-cache --virtual build-deps alpine-sdk python3-dev && \
   pip3 install RPi.GPIO paho-mqtt PyYAML
 
 #
-# Copy python script
+# Copy python app
 #
-RUN mkdir -p /src
-COPY src /src
-RUN chmod +x /src/sense.py
+RUN mkdir -p /app/src
+COPY src /app/src
+COPY configuration.yaml /app/configuration.yaml
+RUN chmod +x /app/src/sense.py
 
 #
 # Remove build-deps
@@ -27,5 +28,5 @@ Run apk del build-deps
 #
 # Set entrypoint to python script
 #
-ENTRYPOINT ["/src/sense.py"]
+ENTRYPOINT ["/app/src/sense.py"]
 # ENTRYPOINT ["/bin/sh"]

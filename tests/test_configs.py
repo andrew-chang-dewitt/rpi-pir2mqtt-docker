@@ -1,6 +1,6 @@
 import pytest
 
-from .src.configs import Configs
+from src.configs import Configs
 
 CONFIG_CONTENTS = '''
 mqtt_host: "127.0.0.1"

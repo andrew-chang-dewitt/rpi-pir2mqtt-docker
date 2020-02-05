@@ -45,7 +45,7 @@ class App:
 
     def fault_signal(self, fault_state):
         topic = self.config.root_topic + "fault"
-        event = Event('fault_state', fault_state, utils.timestamp())
+        event = Fault(fault_state, utils.timestamp())
 
         utils.log(event.log())
         self.mqtt.publish(topic, event.as_json())

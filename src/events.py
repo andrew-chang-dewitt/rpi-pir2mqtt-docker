@@ -23,13 +23,13 @@ class Event:
                     state=self.state,
                     name=self.name,))
 
-class Fault:
-    def __init__(self, name: str, fault_state: str, timestamp: str):
-        if fault_state == "FAILED" or fault_state == "OK":
+class Fault(Event):
+    def __init__(self, fault_state: str, timestamp: str):
+        if fault_state in ("FAILED", "OK"):
             state = fault_state
         else:
             raise ValueError("'{fault_state}' is not a valid input for `fault_signal()`")
 
-        self.name = name
+        self.name = 'fault_state'
         self.state = state
         self.timestamp = timestamp

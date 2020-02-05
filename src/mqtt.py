@@ -37,9 +37,9 @@ class MqttHelper:
 
         return self
 
-    def _on_connect(self, client, userdata, flags, rc):
-        if rc==0:
-            client.connected_flag=True
+    def _on_connect(self, client, _userdata, _flags, rc):
+        if rc == 0:
+            client.connected_flag = True
             utils.log(
                 "Connection established to MQTT Host @ "
                 "{MQTT_HOST}:{MQTT_PORT}"

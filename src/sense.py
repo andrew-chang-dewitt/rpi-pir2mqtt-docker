@@ -11,6 +11,7 @@ import utils
 from configs import Configs
 from mqtt import MqttHelper
 from gpio import GpioHelper
+from events import Event, Fault
 
 class App:
     def __init__(self, error_handler):
@@ -20,65 +21,34 @@ class App:
         self.error_handler = error_handler
 
         # load configuration
-        self.config = Configs.load('/src/configuration.yaml')
+        self.config = Configs.load('/app/configuration.yaml')
 
         # setup GPIO pins
-        self.gpio = GpioHelper(self.config.sensors)
+        self.gpio = GpioHelper(self.config.sensor_list)
 
         # setup mqtt client, then
         # initialize mqtt connection & begin loop
         self.mqtt = MqttHelper(
-                self.config.mqtt_host,
-                self.config.mqtt_port).connect()
+            self.config.mqtt_host,
+            self.config.mqtt_port).connect()
 
         self.fault_signal("FAILED")
 
     def event_detected(self, pin_returned):
-        sensor = self.config.sensors[pin_returned]
+        sensor = self.config.sensor_list[pin_returned]
         topic = self.config.root_topic + sensor.topic
-        state = sensor.determine_state(self.gpio.is_rising(pin_returned))
+        state = sensor.determine_state(self.gpio.input)
+        event = Event(topic, state, utils.timestamp())
 
-        utils.log(
-            "{state} on pin {pin_returned}, "
-            "sending mqtt event to {topic}"
-            .format(
-                state=state,
-                pin_returned=pin_returned,
-                topic=topic
-            )
-        )
-
-        res = {
-            'state': state,
-            'sensor_data': sensor,
-            'timestamp': utils.timestamp(),
-        }
-
-        self.mqtt.publish(topic, json.dumps(res), retain=True)
+        utils.log(event.log())
+        self.mqtt.publish(topic, event.as_json())
 
     def fault_signal(self, fault_state):
-        if fault_state == "FAILED" or fault_state == "OK":
-            state = fault_state
-        else:
-            raise ValueError("'{fault_state}' is not a valid input for `fault_signal()`")
-
         topic = self.config.root_topic + "fault"
-        res = {
-            'id': 'fault',
-            'state': state,
-            'timestamp': utils.timestamp(),
-        }
+        event = Fault(fault_state, utils.timestamp())
 
-        utils.log(
-            "fault state set to {state}, "
-            "sending mqtt event to {topic}"
-            .format(
-                state=state,
-                topic=topic,
-            )
-        )
-
-        self.mqtt.publish(topic, json.dumps(res), retain=True)
+        utils.log(event.log())
+        self.mqtt.publish(topic, event.as_json())
 
     def run(self):
         def cb(pin_returned):

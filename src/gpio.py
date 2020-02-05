@@ -7,6 +7,8 @@ import sensors
 
 class GpioHelper:
     def __init__(self, sensors_list):
+        self.input = GPIO.input
+
         if not sensors_list:
             raise ValueError("At least one sensor must be given")
 
@@ -16,13 +18,10 @@ class GpioHelper:
         for (pin, sensor) in sensors_list.items():
             self.PINS.append(pin)
 
-            if isinstance(sensor, sensors.ReedSwitch):
-                GPIO.setup(
-                    pin,
-                    GPIO.IN,
-                    pull_up_down=GPIO.PUD_DOWN)
-            else:
-                GPIO.setup(pin, GPIO.IN)
+            GPIO.setup(
+                pin,
+                GPIO.IN,
+                pull_up_down=sensor.pull_circuit(GPIO.PUD_DOWN, GPIO.PUD_UP))
 
     def start_listening(self, callback):
         for pin in self.PINS:
@@ -35,7 +34,3 @@ class GpioHelper:
         utils.log("Quitting motion detection...")
         GPIO.cleanup()
         utils.log("GPIO event detection stopped & cleaned")
-
-    @staticmethod
-    def is_rising(pin):
-        return bool(GPIO.input(pin))

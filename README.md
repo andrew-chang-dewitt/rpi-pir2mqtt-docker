@@ -1,6 +1,7 @@
 # rpi-security-gpio2mqtt
 
 ![Docker Build](https://img.shields.io/docker/cloud/build/andrewchangdewitt/rpi-security-gpio2mqtt.svg)
+[![Build Status](https://travis-ci.com/andrew-chang-dewitt/rpi-security-gpio2mqtt.svg?branch=master)](https://travis-ci.com/andrew-chang-dewitt/rpi-security-gpio2mqtt)
 ![PyUp](https://pyup.io/repos/github/andrew-chang-dewitt/rpi-security-gpio2mqtt/shield.svg?t=1580550872445)
 ![Style](https://img.shields.io/badge/code%20style-PEP8-informational)
 
@@ -9,8 +10,8 @@ publishing a message via MQTT on a sensor detection event. Intended to be used
 on a Raspberry Pi with the 40-pin GPIO header & containerized to Docker for 
 easy installation & management.
 
-Getting up and running is fairly simple, but it does have a few hardware & software 
-requirements. Also, some basic circuitry wiring is neccessary. Requirements & 
+Getting up and running is fairly simple, but it does have a few hardware & software
+requirements. Also, some basic circuitry wiring is neccessary. Requirements &
 basic instructions are included below.
 
 ## Requirements
@@ -19,12 +20,12 @@ The software requirements are a much simpler than the hardware, thanks to Docker
 
 ### Software:
 
-Docker on a Linux distribution (tested with Debian-based varities (Ubuntu & Raspbian) 
+Docker on a Linux distribution (tested with Debian-based varities (Ubuntu & Raspbian)
 as well as Alpine, but may work with others).
 
 ### Hardware:
 
-At minimum, the following hardware is needed: 
+At minimum, the following hardware is needed:
 
 1. Raspberry Pi with a 40-pin GPIO header (tested on a Raspberry Pi Zero v1.3, but
 should work just as well on any version from the 1B+ through the newest 4B as well
@@ -42,15 +43,15 @@ or a similar wifi adapter.
 3. Resistors (anything between 1k & 5k Ohms should work)
 3. Wires
 
-For a more complete/complicated setup, it's advisable to have the following:
+For a more complete and easier to manage (but also more complicated to build) setup, it's advisable to have the following:
 
 1. A prototyping board for wiring the sensors to the GPIO pins & building simple circuits
 2. Screw terminals to solder to the prototyping board for easier configuration of sensors
-3. Both solid-core & stranded core wiring (solid core is easier for use on a breadboard & 
-prototyping board, but doesn't work as well for longer runs to sensor installation 
+3. Both solid-core & stranded core wiring (solid core is easier for use on a breadboard &
+prototyping board, but doesn't work as well for longer runs to sensor installation
 locations due to it's liklihood to break inside the insulation)
 
-Lastly, if you want a setup that's really easy to place the raspberry pi, you can always look 
+Lastly, if you want a setup that's really easy to place the raspberry pi, you can always look
 into Power Over Ethernet or using a Pi Zero W.
 
 ## Installation
@@ -58,7 +59,7 @@ into Power Over Ethernet or using a Pi Zero W.
 
 ### Software
 
-The easist path to get the application up & running is to use DockerHub. On a compatible Raspberry Pi 
+The easist path to get the application up & running is to use DockerHub. On a compatible Raspberry Pi
 running Docker on Linux (see requirements above), pull the latest image with
 
 ```
@@ -76,15 +77,15 @@ $ docker run -itd \
     rpi-security-gpio2mqtt
 ```
 
-This command runs the image in privilaged mode (required for GPIO access) & sets the restart parameter to 
-always for better uptime & easier management. It also maps the configuration file to a root folder for the 
-application (any location can be used, just change the part after `-v ` to the path of your choosing like 
-this `-v SOME/PATH/FILE.yaml:/src/configuration.yaml`). Mapping the configuration file to a volume allows 
+This command runs the image in privilaged mode (required for GPIO access) & sets the restart parameter to
+always for better uptime & easier management. It also maps the configuration file to a root folder for the
+application (any location can be used, just change the part after `-v ` to the path of your choosing like
+this `-v SOME/PATH/FILE.yaml:/src/configuration.yaml`). Mapping the configuration file to a volume allows
 for editing of the file & restarting the container to implement changes.
 
 Lastly, you'll need to edit the host copy (located at the first half of the volume declaration you specified
-at `docker run ... -v`). The first part to change is your MQTT settings; you'll need to tell the application 
-your MQTT host address & port number, the MQTT username & password (if using), & (optionally) the root topic 
+at `docker run ... -v`). The first part to change is your MQTT settings; you'll need to tell the application
+your MQTT host address & port number, the MQTT username & password (if using), & (optionally) the root topic
 you want all the sensor's data to be published on.
 
 ```
@@ -105,11 +106,11 @@ sensor_groups:
         # ... more sensors here
 ```
 
-which will cause them to broadcast on a sub topic specific to their group, (e.g. `/security/sensors/a_group` 
-or `/security/sensors/another_group` in the example above). Then individual sensors are added to the groups 
+which will cause them to broadcast on a sub topic specific to their group, (e.g. `/security/sensors/a_group`
+or `/security/sensors/another_group` in the example above). Then individual sensors are added to the groups
 as a sequence, specifying a sensor name (to be used in creating the final MQTT topic), a type (see types below),
-and the GPIO input pin number (using Broadcom numbering only, see 
-[more here](https://www.raspberrypi.org/documentation/usage/gpio/)) 
+and the GPIO input pin number (using Broadcom numbering only, see
+[more here](https://www.raspberrypi.org/documentation/usage/gpio/))
 like this:
 
 ```
@@ -125,26 +126,26 @@ like this:
 
 ### Hardware
 
-Of course, having the application running in Docker on the Pi is useless without having the sensors wired up. 
+Of course, having the application running in Docker on the Pi is useless without having the sensors wired up.
 Instructions for each currently supported type is below.
 
 ## Sensor types
 
-All tested sensor types are included below. Refer to the type for instructions on wiring & how to include 
-in `configuration.yaml`. 
+All tested sensor types are included below. Refer to the type for instructions on wiring & how to include
+in `configuration.yaml`.
 
 If you have a sensor type that's not supported below, please submit an issue or pull request to add the sensor.
 
 ### PIR Motion Sensor
 
-A simple motion sensor, so far supporting HC-SR501 style sensors (easily found on 
-[Amazon](https://www.amazon.com/gp/product/B012ZZ4LPM) or at electronics supply sites like 
-[Adafruit](https://www.adafruit.com/product/189) or 
-[ThePiHut](https://thepihut.com/products/pir-infrared-motion-sensor-hc-sr501)), 
-but it might work with any similar 3-pin, 3-5V digital PIR sensor. 
+A simple motion sensor, so far supporting HC-SR501 style sensors (easily found on
+[Amazon](https://www.amazon.com/gp/product/B012ZZ4LPM) or at electronics supply sites like
+[Adafruit](https://www.adafruit.com/product/189) or
+[ThePiHut](https://thepihut.com/products/pir-infrared-motion-sensor-hc-sr501)),
+but it might work with any similar 3-pin, 3-5V digital PIR sensor.
 
-Wiring of these is very simple, just connect a 5 volt output pin to the PIR-VCC, a Ground pin to PIR-GND, & 
-the desired GPIO pin to PIR-OUT. Then just make sure to use the same GPIO pin number in the configuration file 
+Wiring of these is very simple, just connect a 5 volt output pin to the PIR-VCC, a Ground pin to PIR-GND, &
+the desired GPIO pin to PIR-OUT. Then just make sure to use the same GPIO pin number in the configuration file
 (picture & example configuration below).
 
 ![MotionSensor Wiring](https://raw.githubusercontent.com/andrew-chang-dewitt/rpi-security-gpio2mqtt/documentation/documentation/MotionSensor.png)
@@ -157,14 +158,14 @@ the desired GPIO pin to PIR-OUT. Then just make sure to use the same GPIO pin nu
 
 ### Reed Switches
 
-A simple reed switch, tested on the Honeywell 951WG & the Honeywell 944TRE, but should work with any basic 
+A simple reed switch, tested on the Honeywell 951WG & the Honeywell 944TRE, but should work with any basic
 Form A (Normally Open, SPST--Single Pole Single Throw) switch.
 
-Wiring is a little more complicated than a motion sensor, as a resistor is needed to protect the Pi from 
+Wiring is a little more complicated than a motion sensor, as a resistor is needed to protect the Pi from
 any possible shorts (but wiring a hardware pulldown or pullup circuit is not required as the Pi's software
 version on the Broadcom chip is used instead). To wire this sensor, connect the 3.3 Volt pin to a lead on
-a resistor (anything from 1k to 5k Ohms should work), then connect the other lead to a Ground pin on the Pi. 
-Add the switch by connecting one lead between the 3.3V pin & the resistor, then connect the other lead to 
+a resistor (anything from 1k to 5k Ohms should work), then connect the other lead to a Ground pin on the Pi.
+Add the switch by connecting one lead between the 3.3V pin & the resistor, then connect the other lead to
 the desired GPIO pin. See diagram & example configuration below:
 
 ![ReedSwitch Wiring](https://raw.githubusercontent.com/andrew-chang-dewitt/rpi-security-gpio2mqtt/documentation/documentation/ReedSwitch.png)

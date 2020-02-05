@@ -1,5 +1,6 @@
 def build_sensor(sensor):
-    sensor['type'] = sensor.get('type', 'default')
+    sensor_type = sensor.get('type', 'default')
+    sensor['type'] = sensor_type if sensor_type is not None else 'default'
     types = {
         'motion': MotionSensor,
         'door': ReedSwitch,
@@ -16,14 +17,22 @@ class Sensor:
         self.pin = data['pin']
         self.topic = self.group + '/' + self.type + '/' + self.name
 
+    def determine_state(self, check_state_callback):
+        return "TRIPPED" if check_state_callback(self.pin) else "OK"
+
     @staticmethod
-    def determine_state(rising):
-        return "TRIPPED" if rising else "OK"
+    def pull_circuit(_up_value, _down_value):
+        return None
+
 
 class MotionSensor(Sensor):
     pass
 
+
 class ReedSwitch(Sensor):
+    def determine_state(self, check_state_callback):
+        return "OK" if check_state_callback(self.pin) else "TRIPPED"
+
     @staticmethod
-    def determine_state(rising):
-        return "OK" if rising else "TRIPPED"
+    def pull_circuit(up_value, _down_value):
+        return up_value

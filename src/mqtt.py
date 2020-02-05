@@ -56,5 +56,8 @@ class MqttHelper:
 
             utils.log("Failure reason code: {rc}".format(rc=rc))
 
-    def __getattr__(self, attr):
-        return getattr(self._client, attr)
+    def publish(self, topic: str, payload: str, retain: bool = True):
+        return self._client.publish(topic, payload, retain)
+
+    # def __getattr__(self, attr):
+    #     return getattr(self._client, attr)

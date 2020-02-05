@@ -1,6 +1,7 @@
 from src.sensors import build_sensor
 from src.sensors import Sensor as SensorActual
 from src.configs import Configs as ConfigsActual
+from src.events import Event as EventActual
 
 def mock_gpio_input_rising_fn(pin_number):
     return 1
@@ -53,3 +54,8 @@ class Sensor:
             'type': sensor_type,
             'pin': 1,
         })
+
+class Event:
+    @staticmethod
+    def create() -> EventActual:
+        return EventActual('name', 'state', 'time is a lie')

@@ -60,17 +60,21 @@ def test_if_no_type_is_given_default_to_Sensor(default_sensor):
     assert isinstance(default_sensor, Sensor)
     assert not isinstance(default_sensor, MotionSensor)
 
-def test_default_sensor_returns_TRIPPED_if_rising(default_sensor):
-    rising = True
+def mock_gpio_input_rising_fn(pin_number):
+    return 1
 
-    assert default_sensor.determine_state(rising) == 'TRIPPED'
+def mock_gpio_input_falling_fn(pin_number):
+    return 0
+
+def test_default_sensor_returns_TRIPPED_if_rising(default_sensor):
+    assert default_sensor.determine_state(mock_gpio_input_rising_fn) == 'TRIPPED'
 
 def test_motion_sensor_returns_TRIPPED_if_rising(motion):
-    rising = True
-
-    assert motion.determine_state(rising) == 'TRIPPED'
+    assert motion.determine_state(mock_gpio_input_rising_fn) == 'TRIPPED'
 
 def test_door_and_window_sensors_return_TRIPPED_if_falling(door):
-    rising = False
+    assert door.determine_state(mock_gpio_input_falling_fn) == 'TRIPPED'
 
-    assert door.determine_state(rising) == 'TRIPPED'
+def test_sensor_knows_what_type_of_circuit_it_needs(default_sensor, door):
+    assert default_sensor.pull_circuit('up', 'down') is None
+    assert door.pull_circuit('up', 'down') is 'up'

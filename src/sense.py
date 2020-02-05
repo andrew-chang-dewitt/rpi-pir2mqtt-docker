@@ -28,15 +28,15 @@ class App:
         # setup mqtt client, then
         # initialize mqtt connection & begin loop
         self.mqtt = MqttHelper(
-                self.config.mqtt_host,
-                self.config.mqtt_port).connect()
+            self.config.mqtt_host,
+            self.config.mqtt_port).connect()
 
         self.fault_signal("FAILED")
 
     def event_detected(self, pin_returned):
         sensor = self.config.sensor_list[pin_returned]
         topic = self.config.root_topic + sensor.topic
-        state = sensor.determine_state(self.gpio.is_rising(pin_returned))
+        state = sensor.determine_state(self.gpio.input)
 
         utils.log(
             "{state} on pin {pin_returned}, "

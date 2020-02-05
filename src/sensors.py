@@ -1,5 +1,6 @@
 def build_sensor(sensor):
-    sensor['type'] = sensor.get('type', 'default')
+    sensor_type = sensor.get('type', 'default')
+    sensor['type'] = sensor_type if sensor_type is not None else 'default'
     types = {
         'motion': MotionSensor,
         'door': ReedSwitch,

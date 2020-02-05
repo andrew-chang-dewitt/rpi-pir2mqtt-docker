@@ -1,5 +1,6 @@
 import json
 
+
 class Event:
     def __init__(self, name: str, state: str, timestamp: str):
         self.name = name
@@ -23,12 +24,14 @@ class Event:
                     state=self.state,
                     name=self.name,))
 
+
 class Fault(Event):
     def __init__(self, fault_state: str, timestamp: str):
         if fault_state in ("FAILED", "OK"):
             state = fault_state
         else:
-            raise ValueError("'{fault_state}' is not a valid input for `fault_signal()`")
+            raise ValueError(
+                "'{fault_state}' is not a valid input for `fault_signal()`")
 
         self.name = 'fault_state'
         self.state = state

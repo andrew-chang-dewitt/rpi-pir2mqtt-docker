@@ -3,11 +3,14 @@ from src.sensors import Sensor as SensorActual
 from src.configs import Configs as ConfigsActual
 from src.events import Event as EventActual, Fault as FaultActual
 
+
 def mock_gpio_input_rising_fn(pin_number):
     return 1
 
+
 def mock_gpio_input_falling_fn(pin_number):
     return 0
+
 
 SENSOR_A = {
     'name': 'sensor_a',
@@ -25,6 +28,7 @@ SENSOR_1 = {
     'pin': 9,
 }
 
+
 class Config:
     @staticmethod
     def create():
@@ -33,9 +37,10 @@ class Config:
             'mqtt_port': 1883,
             'root_topic': '/security/sensors/',
             'sensor_groups': {
-                'example_group': [SENSOR_A, SENSOR_B,],
-                'another_group': [SENSOR_1,],
+                'example_group': [SENSOR_A, SENSOR_B, ],
+                'another_group': [SENSOR_1, ],
             }})
+
 
 class Sensor:
     @staticmethod
@@ -55,10 +60,12 @@ class Sensor:
             'pin': 1,
         })
 
+
 class Event:
     @staticmethod
     def create() -> EventActual:
         return EventActual('name', 'state', 'time is a lie')
+
 
 class Fault:
     @staticmethod

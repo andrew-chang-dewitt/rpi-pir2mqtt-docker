@@ -24,8 +24,10 @@ class Sensor:
     def pull_circuit(_up_value, _down_value):
         return None
 
+
 class MotionSensor(Sensor):
     pass
+
 
 class ReedSwitch(Sensor):
     def determine_state(self, check_state_callback):

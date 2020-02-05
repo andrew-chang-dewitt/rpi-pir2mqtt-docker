@@ -36,9 +36,9 @@ as the Zero W)
 or a similar wifi adapter.
 2. Sensors - So far this can be any of the following types
 
-  - PIR Motion (tested with the HC-SR501)
-  - Form A (Normally Open, SPST) Reed Switch (tested with the Honeywell 951WG & the
-  Honeywell 944TRE, but should work with any basic Form A switch)
+    - PIR Motion (tested with the HC-SR501)
+    - Form A (Normally Open, SPST) Reed Switch (tested with the Honeywell 951WG & the 
+    Honeywell 944TRE, but should work with any basic Form A switch)
 
 3. Resistors (anything between 1k & 5k Ohms should work)
 3. Wires

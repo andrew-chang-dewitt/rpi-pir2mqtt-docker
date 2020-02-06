@@ -9,6 +9,7 @@ def build_sensor(sensor):
 
     return types.get(sensor['type'], Sensor)(sensor)
 
+
 class Sensor:
     def __init__(self, data):
         self.name = data['name']

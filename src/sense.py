@@ -13,6 +13,7 @@ from src.mqtt import MqttHelper
 from src.gpio import GpioHelper
 from src.events import Event, Fault
 
+
 class App:
     def __init__(self, error_handler):
         # initilize running variable for tracking quit state
@@ -52,8 +53,9 @@ class App:
 
     def run(self):
         def cb(pin_returned):
-            # wrap callback in a try/except that rethrows errors to the main thread
-            # so that the app doesn't keep chugging along thinking everything is okay
+            # wrap callback in a try/except that rethrows errors to the main
+            # thread so that the app doesn't keep chugging along thinking
+            # everything is okay
             try:
                 return self.event_detected(pin_returned)
             except Exception as e:
@@ -65,7 +67,6 @@ class App:
             self.fault_signal("OK")
             time.sleep(600)
 
-
     def quit(self):
         self.exit = True
 
@@ -75,14 +76,17 @@ class App:
         self.mqtt.disconnect()
         utils.log("rpi-pir2mqtt successfully shut down")
 
+
 def error_handler(exception, cb):
     utils.log("An unexpected error has occurred, exiting app...")
     cb()
     raise exception
 
+
 def sig_handler(signo, _frame):
     utils.log("sig_handler processing quit signal")
     APP.quit()
+
 
 APP = App(error_handler)
 signal.signal(signal.SIGTERM, sig_handler)

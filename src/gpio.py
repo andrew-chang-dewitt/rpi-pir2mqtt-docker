@@ -5,6 +5,7 @@ import RPi.GPIO as GPIO
 from src import utils
 from src import sensors
 
+
 class GpioHelper:
     def __init__(self, sensors_list):
         self.input = GPIO.input

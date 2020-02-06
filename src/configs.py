@@ -2,6 +2,7 @@ import yaml
 
 from src import sensors
 
+
 class Configs:
     def __init__(self, config_obj):
         self.mqtt_host = config_obj['mqtt_host']
@@ -20,5 +21,5 @@ class Configs:
         with open(config_file, 'r') as stream:
             try:
                 return Configs(yaml.safe_load(stream))
-            except:
+            except BaseException:
                 raise

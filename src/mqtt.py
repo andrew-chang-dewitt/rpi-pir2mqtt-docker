@@ -4,11 +4,14 @@ import paho.mqtt.client as mqtt
 
 from src import utils
 
+
 class MqttHelper:
     def __init__(self, host, port):
-        mqtt.Client.connected_flag = False # creates connection flag for looping
+        # create connection flag for looping
+        mqtt.Client.connected_flag = False
         self._client = mqtt.Client(socket.gethostname())
-        self._client.on_connect = self._on_connect # binding client connection callback to above fn
+        # binding client connection callback to above fn
+        self._client.on_connect = self._on_connect
         self._MQTT_HOST = host
         self._MQTT_PORT = port
 

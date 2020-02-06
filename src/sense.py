@@ -7,11 +7,11 @@ import time
 import json
 import signal
 
-import utils
-from configs import Configs
-from mqtt import MqttHelper
-from gpio import GpioHelper
-from events import Event, Fault
+from src import utils
+from src.configs import Configs
+from src.mqtt import MqttHelper
+from src.gpio import GpioHelper
+from src.events import Event, Fault
 
 class App:
     def __init__(self, error_handler):

@@ -2,8 +2,8 @@ import json
 import time
 import RPi.GPIO as GPIO
 
-import utils
-import sensors
+from src import utils
+from src import sensors
 
 class GpioHelper:
     def __init__(self, sensors_list):
@@ -18,10 +18,18 @@ class GpioHelper:
         for (pin, sensor) in sensors_list.items():
             self.PINS.append(pin)
 
-            GPIO.setup(
-                pin,
-                GPIO.IN,
-                pull_up_down=sensor.pull_circuit(GPIO.PUD_DOWN, GPIO.PUD_UP))
+            if sensor.pull_up or sensor.pull_down:
+                if sensor.pull_up:
+                    pull_up_down = GPIO.PUD_UP
+                elif sensor.pull_down:
+                    pull_up_down = GPIO.PUD_DOWN
+
+                GPIO.setup(
+                    pin,
+                    GPIO.IN,
+                    pull_up_down=pull_up_down)
+            else:
+                GPIO.setup(pin, GPIO.IN)
 
     def start_listening(self, callback):
         for pin in self.PINS:

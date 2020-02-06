@@ -20,9 +20,13 @@ class Sensor:
     def determine_state(self, check_state_callback):
         return "TRIPPED" if check_state_callback(self.pin) else "OK"
 
-    @staticmethod
-    def pull_circuit(_up_value, _down_value):
-        return None
+    @property
+    def pull_up(self):
+        return False
+
+    @property
+    def pull_down(self):
+        return False
 
 
 class MotionSensor(Sensor):
@@ -33,6 +37,6 @@ class ReedSwitch(Sensor):
     def determine_state(self, check_state_callback):
         return "OK" if check_state_callback(self.pin) else "TRIPPED"
 
-    @staticmethod
-    def pull_circuit(up_value, _down_value):
-        return up_value
+    @property
+    def pull_up(self):
+        return True

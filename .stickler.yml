@@ -1,8 +1,0 @@
-linters:
-  pep8:
-    python: 3
-    fixer: true
-  shellcheck:
-    shell: bash
-fixers:
-  enable: true

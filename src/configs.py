@@ -1,6 +1,6 @@
 import yaml
 
-from .sensors import build_sensor
+from src import sensors
 
 class Configs:
     def __init__(self, config_obj):
@@ -13,7 +13,7 @@ class Configs:
         for (group, sensor_list) in config_obj['sensor_groups'].items():
             for sensor in sensor_list:
                 sensor['group'] = group
-                self.sensor_list[sensor['pin']] = build_sensor(sensor)
+                self.sensor_list[sensor['pin']] = sensors.build_sensor(sensor)
 
     @staticmethod
     def load(config_file):

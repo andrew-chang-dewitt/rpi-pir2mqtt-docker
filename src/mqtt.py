@@ -2,7 +2,7 @@ import time
 import socket
 import paho.mqtt.client as mqtt
 
-import utils
+from src import utils
 
 class MqttHelper:
     def __init__(self, host, port):

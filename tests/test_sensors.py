@@ -65,6 +65,12 @@ def test_door_sensors_return_TRIPPED_if_falling(door):
         factories.mock_gpio_input_falling_fn) == 'TRIPPED'
 
 
-def test_sensor_knows_what_type_of_circuit_it_needs(default_sensor, door):
-    assert default_sensor.pull_circuit('up', 'down') is None
-    assert door.pull_circuit('up', 'down') is 'up'
+def test_sensors_typically_dont_need_pull_up_down_resistors(default_sensor):
+    assert not default_sensor.pull_up
+    assert not default_sensor.pull_down
+
+def test_door_window_sensors_need_pull_up_resistors(door, window):
+    assert window.pull_up
+    assert not window.pull_down
+    assert door.pull_up
+    assert not door.pull_down

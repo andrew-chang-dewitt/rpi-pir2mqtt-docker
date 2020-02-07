@@ -76,6 +76,8 @@ class App:
         self.mqtt.disconnect()
         utils.log("rpi-pir2mqtt successfully shut down")
 
+        raise SystemExit
+
 
 def error_handler(exception, cb):
     utils.log("An unexpected error has occurred, exiting app...")

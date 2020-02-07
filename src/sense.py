@@ -76,6 +76,8 @@ class App:
         self.mqtt.disconnect()
         utils.log("rpi-pir2mqtt successfully shut down")
 
+        raise SystemExit
+
 
 def error_handler(exception, cb):
     utils.log("An unexpected error has occurred, exiting app...")
@@ -95,8 +97,8 @@ signal.signal(signal.SIGINT, sig_handler)
 try:
     utils.log("Starting app...")
     APP.run()
-except SystemExit:
-    utils.log("SystemExit caught, quitting...")
-    APP.quit()
+# except SystemExit:
+#     utils.log("SystemExit caught, quitting...")
+#     APP.quit()
 except Exception as e:
     error_handler(e, APP.quit())

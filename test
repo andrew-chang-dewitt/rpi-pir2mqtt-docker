@@ -1,0 +1,13 @@
+#!/bin/bash
+
+echo "Running autofixers"
+autopep8 --in-place -r --aggressive --aggressive src
+autopep8 --in-place -r --aggressive --aggressive tests
+echo -e "\n\nRunning linters"
+echo -e "\n pycodestyle"
+pycodestyle --count src
+pycodestyle --count tests
+echo -e "\n pydocstyle"
+pydocstyle --count src
+echo -e "\n\nRunning tests"
+python -m pytest tests

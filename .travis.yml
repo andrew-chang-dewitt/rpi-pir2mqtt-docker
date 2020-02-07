@@ -8,7 +8,5 @@ install:
     - pip install -r requirements.txt
     - pip install -r requirements/dev.txt
 script:
-    - autopep8 --in-place --aggressive --aggressive -r src
-    - autopep8 --in-place --aggressive --aggressive -r tests
     - pycodestyle src tests
     - python -m pytest tests/

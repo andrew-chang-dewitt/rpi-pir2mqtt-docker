@@ -59,3 +59,8 @@ class GpioHelper:
         utils.log("Quitting motion detection...")
         io.cleanup()
         utils.log("GPIO event detection stopped & cleaned")
+
+    @staticmethod
+    def input():
+        """Wrap & directly expose RPi.GPIO's input method."""
+        return io.input()

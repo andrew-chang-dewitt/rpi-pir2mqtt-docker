@@ -10,4 +10,4 @@ pycodestyle --count tests
 echo -e "\n pydocstyle"
 pydocstyle --count src
 echo -e "\n\nRunning tests"
-python -m pytest tests
+python3 -m pytest tests

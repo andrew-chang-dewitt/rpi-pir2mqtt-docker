@@ -61,6 +61,6 @@ class GpioHelper:
         utils.log("GPIO event detection stopped & cleaned")
 
     @staticmethod
-    def input():
+    def input(pin_no: int) -> bool:
         """Wrap & directly expose RPi.GPIO's input method."""
-        return io.input()
+        return io.input(pin_no)

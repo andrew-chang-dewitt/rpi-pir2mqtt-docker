@@ -19,7 +19,7 @@ import signal
 from typing import Callable, Any
 
 from src import utils
-from src.configs import Configs
+from src.configs import load_configs
 from src.mqtt import MqttHelper
 from src.gpio import GpioHelper
 from src.events import Event, Fault
@@ -35,14 +35,16 @@ class App:
 
     def __init__(
             self,
-            external_error_handler: Callable[Exception, Callable[[Any], Any], None]):
+            external_error_handler:
+            Callable[Exception, Callable[[Any], Any], None]):
         """Set up an Application instance.
 
         Initialize other modules' classes & set up instance state.
 
         Arguments:
-        external_error_handler -- a function to handle errors that may arise inside
-                                  the application, must accept an Exeption & a callback
+        external_error_handler -- a function to handle errors that may arise
+                                  inside the application, must accept an
+                                  Exeption & a callback
         """
         # initilize running variable for tracking quit state
         self.__exit = False
@@ -50,7 +52,7 @@ class App:
         self.__error_handler = external_error_handler
 
         # load configuration
-        self.__configs = Configs.load('/app/configuration.yaml')
+        self.__configs = load_configs('/app/configuration.yaml')
 
         # setup GPIO pins
         self.__gpio = GpioHelper(self.__configs.sensor_list)

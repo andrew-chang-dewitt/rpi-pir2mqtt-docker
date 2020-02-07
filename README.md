@@ -148,7 +148,7 @@ Wiring of these is very simple, just connect a 5 volt output pin to the PIR-VCC,
 the desired GPIO pin to PIR-OUT. Then just make sure to use the same GPIO pin number in the configuration file
 (picture & example configuration below).
 
-![MotionSensor Wiring](https://raw.githubusercontent.com/andrew-chang-dewitt/rpi-security-gpio2mqtt/documentation/documentation/MotionSensor.png)
+![MotionSensor Wiring](https://raw.githubusercontent.com/andrew-chang-dewitt/rpi-security-gpio2mqtt/master/documentation/MotionSensor.png)
 
 ```
 - name: "motion_sensor"
@@ -168,7 +168,7 @@ a resistor (anything from 1k to 5k Ohms should work), then connect the other lea
 Add the switch by connecting one lead between the 3.3V pin & the resistor, then connect the other lead to
 the desired GPIO pin. See diagram & example configuration below:
 
-![ReedSwitch Wiring](https://raw.githubusercontent.com/andrew-chang-dewitt/rpi-security-gpio2mqtt/documentation/documentation/ReedSwitch.png)
+![ReedSwitch Wiring](https://raw.githubusercontent.com/andrew-chang-dewitt/rpi-security-gpio2mqtt/master/documentation/ReedSwitch.png)
 
 ```
 - name: "reed switch"

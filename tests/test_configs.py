@@ -1,6 +1,7 @@
 import pytest
 
-from src.configs import Configs
+import factories
+from src.configs import Configs, load_configs
 
 CONFIG_CONTENTS = '''
 mqtt_host: "127.0.0.1"
@@ -12,7 +13,7 @@ sensor_groups:
       - name: "sensor_a"
         type: "motion"
         pin: 7
-      - name: "sensor_B"
+      - name: "sensor_b"
         type: "door"
         pin: 8
     another_group:
@@ -32,18 +33,23 @@ def config_file(tmp_path):
 
 @pytest.fixture
 def loaded(config_file):
-    return Configs.load(str(config_file))
+    return load_configs(str(config_file))
+
+
+@pytest.fixture
+def configs():
+    return factories.Config.create()
 
 
 def test_can_load_configuration_file(loaded):
     assert isinstance(loaded, Configs)
 
 
-def test_a_loaded_config_file_has_root_attributes(loaded):
-    assert loaded.mqtt_host == "127.0.0.1"
-    assert loaded.mqtt_port == 1883
-    assert loaded.root_topic == "/security/sensors/"
+def test_a_loaded_config_file_has_root_attributes(configs):
+    assert configs.mqtt_host == "127.0.0.1"
+    assert configs.mqtt_port == 1883
+    assert configs.root_topic == "/security/sensors/"
 
 
-def test_a_loaded_config_file_loads_all_sensors(loaded):
-    assert len(loaded.sensor_list) == 3
+def test_a_loaded_config_file_loads_all_sensors(configs):
+    assert len(configs.sensor_list) == 3

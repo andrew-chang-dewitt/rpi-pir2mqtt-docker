@@ -1,3 +1,8 @@
+"""A wrapper on paho-mqtt; handles connections & publishing messages.
+
+Classes:
+    MqttHelper -- A simplified wrapper on paho-mqtt.
+"""
 import time
 import socket
 import paho.mqtt.client as mqtt
@@ -6,61 +11,70 @@ from src import utils
 
 
 class MqttHelper:
-    def __init__(self, host, port):
+    """A simplified wrapper on paho-mqtt methods.
+
+    Methods:
+        connect    -- Establish an mqtt.Client connection.
+        disconnect -- Disconnect the Client created by `connect`.
+        publish    -- Exposes paho-mqtt's `Client.publish` method directly.
+    """
+
+    def __init__(self, host: str, port: int):
+        """Init MqttHelper instance with given host address & port number."""
         # create connection flag for looping
         mqtt.Client.connected_flag = False
-        self._client = mqtt.Client(socket.gethostname())
+        self.__client = mqtt.Client(socket.gethostname())
         # binding client connection callback to above fn
-        self._client.on_connect = self._on_connect
-        self._MQTT_HOST = host
-        self._MQTT_PORT = port
+        self.__client.on_connect = self.__on_connect
+        self.__mqtt_host = host
+        self.__mqtt_port = port
 
-    def connect(self):
-        self._client.loop_start()
+    def connect(self) -> 'MqttHelper':
+        """Establish an mqtt.Client connection."""
+        self.__client.loop_start()
         utils.log(
             "Attempting to establish connection to MQTT Host @ "
-            "{MQTT_HOST}:{MQTT_PORT}"
+            "{mqtt_host}:{mqtt_port}"
             .format(
-                MQTT_HOST=self._MQTT_HOST,
-                MQTT_PORT=self._MQTT_PORT))
+                mqtt_host=self.__mqtt_host,
+                mqtt_port=self.__mqtt_port))
 
-        self._client.connect(self._MQTT_HOST, self._MQTT_PORT)
-        while not self._client.connected_flag:
+        self.__client.connect(self.__mqtt_host, self.__mqtt_port)
+        while not self.__client.connected_flag:
             utils.log("Waiting for connection")
             time.sleep(1)
 
         return self
 
-    def disconnect(self):
+    def disconnect(self) -> None:
+        """Disconnect the Client created by `connect`."""
         utils.log("Disconnecting MQTT client...")
-        self._client.loop_stop()
-        self._client.disconnect()
-        self._client.connected_flag = False
+        self.__client.loop_stop()
+        self.__client.disconnect()
+        self.__client.connected_flag = False
         utils.log("MQTT client disonnected")
 
-        return self
+    def publish(self, topic: str, payload: str, retain: bool = True):
+        """Exposes paho-mqtt's `Client.publish` method directly."""
+        return self.__client.publish(topic, payload, retain)
 
-    def _on_connect(self, client, _userdata, _flags, rc):
-        if rc == 0:
+    def __on_connect(self, client, _userdata, _flags, reason_code):
+        if reason_code == 0:
             client.connected_flag = True
             utils.log(
                 "Connection established to MQTT Host @ "
-                "{MQTT_HOST}:{MQTT_PORT}"
+                "{mqtt_host}:{mqtt_port}"
                 .format(
-                    MQTT_HOST=self._MQTT_HOST,
-                    MQTT_PORT=self._MQTT_PORT))
+                    mqtt_host=self.__mqtt_host,
+                    mqtt_port=self.__mqtt_port))
         else:
             utils.log(
                 "Connection failed to MQTT Host @ "
-                "{MQTT_HOST}:{MQTT_PORT}"
+                "{mqtt_host}:{mqtt_port}"
                 .format(
-                    MQTT_HOST=self._MQTT_HOST,
-                    MQTT_PORT=self._MQTT_PORT))
+                    mqtt_host=self.__mqtt_host,
+                    mqtt_port=self.__mqtt_port))
 
-            utils.log("Failure reason code: {rc}".format(rc=rc))
-
-    def publish(self, topic: str, payload: str, retain: bool = True):
-        return self._client.publish(topic, payload, retain)
-
-    # def __getattr__(self, attr):
-    #     return getattr(self._client, attr)
+            utils.log(
+                "Failure reason code: {reason_code}"
+                .format(reason_code=reason_code))

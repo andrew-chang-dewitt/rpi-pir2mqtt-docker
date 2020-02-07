@@ -16,7 +16,7 @@ Runs the application in a try...except statement to capture Exceptions
 #
 import time
 import signal
-from typing import Callable, Any
+from typing import Callable
 
 from src import utils
 from src.configs import load_configs
@@ -35,21 +35,20 @@ class App:
 
     def __init__(
             self,
-            external_error_handler:
-            Callable[Exception, Callable[[Any], Any], None]):
+            err_handler: Callable[[Exception, Callable[[None], None]], None]):
         """Set up an Application instance.
 
         Initialize other modules' classes & set up instance state.
 
         Arguments:
-        external_error_handler -- a function to handle errors that may arise
+        err_handler -- a function to handle errors that may arise
                                   inside the application, must accept an
                                   Exeption & a callback
         """
         # initilize running variable for tracking quit state
         self.__exit = False
 
-        self.__error_handler = external_error_handler
+        self.__error_handler = err_handler
 
         # load configuration
         self.__configs = load_configs('/app/configuration.yaml')
@@ -109,7 +108,9 @@ class App:
         self.__mqtt.publish(topic, event.as_json())
 
 
-def error_handler(exception, callback):
+def error_handler(
+        exception: Exception,
+        callback: Callable[[None], None]) -> None:
     """Very very basic error "handler".
 
     Arguments:
@@ -118,11 +119,12 @@ def error_handler(exception, callback):
                  the original exception
     """
     utils.log("An unexpected error has occurred, exiting app...")
+    utils.log("Exception data: \n{exception}".format(exception=exception))
     callback()
     raise exception
 
 
-def sig_handler(signo, _frame):
+def sig_handler(signo: int, _frame) -> None:
     """Log signal & pass handling to App.quit().
 
     Simple callback to be given to signal.signal().
@@ -144,4 +146,5 @@ except SystemExit:
     utils.log("SystemExit caught, quitting...")
     APP.quit()
 except Exception as err:  # pylint: disable=broad-except
+    utils.log("Exception caught in final try...except block.")
     error_handler(err, APP.quit())

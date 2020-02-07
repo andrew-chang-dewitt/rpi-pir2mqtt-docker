@@ -174,3 +174,44 @@ the desired GPIO pin. See diagram & example configuration below:
   type: "door" # a reed switch can be specified as either a 'door' or 'window' switch
   pin: # ... desired pin #
 ```
+
+## Usage
+
+When all the necessary setup from above has been completed, usage is fairly simple. The sensors you've setup 
+will publish state changes to your mqtt server, so any actions you want to be triggered by these changes simply 
+need to subscribe to the correct topic. 
+
+For example, assuming you have a single door sensor (reed switch, see hardware requirements above) wired to 
+GPIO 7 & your `configuration.yaml` is set up similar to the following excerpts:
+
+```
+...
+root_topic: "/security/sensors"
+...
+
+...
+sensor_groups:
+    a_group:
+      - name: "sensor_a"
+        type: "door"
+        pin: 7
+```
+
+then anything you want to listen for state changes just needs to subscribe to the topic `/security/sensors/a_group/door/sensor_a` & it will receive updates.
+
+If you wanted to have Home Assistant observe the above sensor setup, you'd just need to add it as a binary sensor
+listening on that topic for the `state` attribute:
+
+```
+# homeassistant's configuration.yaml
+...
+binary_sensor:
+  - platform: mqtt
+    name: Some Sensor Name
+    device_class: "door"
+    state_topic: "/security/sensors/a_group/door/sensor_a"
+    value_template: "{{ value_json.state }}"
+    payload_on: "TRIPPED"
+    payload_off: "OK"
+...
+```

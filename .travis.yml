@@ -1,14 +1,10 @@
 language: python
 python:
     - "3.5"
-    - "3.6"
-    - "3.7"
-    - "3.8"
 install:
     - pip install -r requirements.txt
     - pip install -r requirements/dev.txt
 script:
-    - autopep8 --in-place --aggressive --aggressive -r src
-    - autopep8 --in-place --aggressive --aggressive -r tests
     - pycodestyle src tests
+    - pydocstyle src
     - python -m pytest tests/

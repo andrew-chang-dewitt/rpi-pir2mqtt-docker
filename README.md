@@ -164,9 +164,8 @@ Form A (Normally Open, SPST--Single Pole Single Throw) switch.
 Wiring is a little more complicated than a motion sensor, as a resistor is needed to protect the Pi from
 any possible shorts (but wiring a hardware pulldown or pullup circuit is not required as the Pi's software
 version on the Broadcom chip is used instead). To wire this sensor, connect the 3.3 Volt pin to a lead on
-a resistor (anything from 1k to 5k Ohms should work), then connect the other lead to a Ground pin on the Pi.
-Add the switch by connecting one lead between the 3.3V pin & the resistor, then connect the other lead to
-the desired GPIO pin. See diagram & example configuration below:
+a resistor (anything from 1k to 5k Ohms should work), then connect the other lead to a lead on the Reed Switch. 
+Lastly, connect the other Reed Switch lead to a GPIO input. See diagram & example configuration below:
 
 ![ReedSwitch Wiring](https://raw.githubusercontent.com/andrew-chang-dewitt/rpi-security-gpio2mqtt/master/documentation/ReedSwitch.png)
 

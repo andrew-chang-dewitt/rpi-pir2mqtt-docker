@@ -77,8 +77,8 @@ class ReedSwitch(Sensor):
         return "OK" if check_state_callback(self.pin) else "TRIPPED"
 
     @property
-    def pull_up(self):
-        """See Sensor.pull_up."""
+    def pull_down(self):
+        """See Sensor.pull_down."""
         return True
 
 

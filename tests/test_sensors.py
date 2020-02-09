@@ -70,8 +70,8 @@ def test_sensors_typically_dont_need_pull_up_down_resistors(default_sensor):
     assert not default_sensor.pull_down
 
 
-def test_door_window_sensors_need_pull_up_resistors(door, window):
-    assert window.pull_up
-    assert not window.pull_down
-    assert door.pull_up
-    assert not door.pull_down
+def test_door_window_sensors_need_pull_down_resistors(door, window):
+    assert not window.pull_up
+    assert window.pull_down
+    assert not door.pull_up
+    assert door.pull_down

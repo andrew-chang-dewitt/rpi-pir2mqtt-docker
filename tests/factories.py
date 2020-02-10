@@ -29,7 +29,7 @@ SENSOR_1 = {
 }
 
 
-class Config:
+class Configs:
     @staticmethod
     def create():
         return ConfigsActual({

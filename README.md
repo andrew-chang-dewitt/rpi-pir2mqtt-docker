@@ -5,9 +5,9 @@
 ![PyUp](https://pyup.io/repos/github/andrew-chang-dewitt/rpi-security-gpio2mqtt/shield.svg?t=1580550872445)
 ![Style](https://img.shields.io/badge/code%20style-PEP8-informational)
 
-A docker image for reading GPIO input from wired home security sensors & 
-publishing a message via MQTT on a sensor detection event. Intended to be used 
-on a Raspberry Pi with the 40-pin GPIO header & containerized to Docker for 
+A docker image for reading GPIO input from wired home security sensors &
+publishing a message via MQTT on a sensor detection event. Intended to be used
+on a Raspberry Pi with the 40-pin GPIO header & containerized to Docker for
 easy installation & management.
 
 Getting up and running is fairly simple, but it does have a few hardware & software
@@ -37,7 +37,7 @@ or a similar wifi adapter.
 2. Sensors - So far this can be any of the following types
 
     - PIR Motion (tested with the HC-SR501)
-    - Form A (Normally Open, SPST) Reed Switch (tested with the Honeywell 951WG & the 
+    - Form A (Normally Open, SPST) Reed Switch (tested with the Honeywell 951WG & the
     Honeywell 944TRE, but should work with any basic Form A switch)
 
 3. Resistors (anything between 1k & 5k Ohms should work)
@@ -74,6 +74,8 @@ $ docker run -itd \
     --restart always
     --privileged \
     -v /rpi-security2mqtt/configuration.yaml:/src/configuration.yaml \
+    -e MQTT_USER=your_username_here
+    -e MQTT_PASS=your_password_here
     rpi-security-gpio2mqtt
 ```
 
@@ -81,18 +83,18 @@ This command runs the image in privilaged mode (required for GPIO access) & sets
 always for better uptime & easier management. It also maps the configuration file to a root folder for the
 application (any location can be used, just change the part after `-v ` to the path of your choosing like
 this `-v SOME/PATH/FILE.yaml:/src/configuration.yaml`). Mapping the configuration file to a volume allows
-for editing of the file & restarting the container to implement changes.
+for editing of the file & restarting the container to implement changes. The two `-e` flags are to set
+your username & password for your mqtt broker & need to be edited to match your setup as needed. Alternatively,
+these can be left out if you want your security to publish on mqtt as an anonymous user.
 
 Lastly, you'll need to edit the host copy (located at the first half of the volume declaration you specified
 at `docker run ... -v`). The first part to change is your MQTT settings; you'll need to tell the application
-your MQTT host address & port number, the MQTT username & password (if using), & (optionally) the root topic
+your MQTT host address & port number & (only if you want to change the default value) the root topic
 you want all the sensor's data to be published on.
 
 ```
 mqtt_host: "host.address.here"    # must be a string, defaults to 127.0.0.1, or localhost
 mqtt_port: 1111                   # must be a number, defaults to 1883
-mqtt_user: "username"             # string, defaults to not being set
-mqtt_pass: "password"             # string, defaults to not being set
 root_topic: "/some/topic/"        # string, the last '/' is required, defaults to /security/sensors/
 ```
 
@@ -164,7 +166,7 @@ Form A (Normally Open, SPST--Single Pole Single Throw) switch.
 Wiring is a little more complicated than a motion sensor, as a resistor is needed to protect the Pi from
 any possible shorts (but wiring a hardware pulldown or pullup circuit is not required as the Pi's software
 version on the Broadcom chip is used instead). To wire this sensor, connect the 3.3 Volt pin to a lead on
-a resistor (anything from 1k to 5k Ohms should work), then connect the other lead to a lead on the Reed Switch. 
+a resistor (anything from 1k to 5k Ohms should work), then connect the other lead to a lead on the Reed Switch.
 Lastly, connect the other Reed Switch lead to a GPIO input. See diagram & example configuration below:
 
 ![ReedSwitch Wiring](https://raw.githubusercontent.com/andrew-chang-dewitt/rpi-security-gpio2mqtt/master/documentation/ReedSwitch.png)
@@ -177,11 +179,11 @@ Lastly, connect the other Reed Switch lead to a GPIO input. See diagram & exampl
 
 ## Usage
 
-When all the necessary setup from above has been completed, usage is fairly simple. The sensors you've setup 
-will publish state changes to your mqtt server, so any actions you want to be triggered by these changes simply 
-need to subscribe to the correct topic. 
+When all the necessary setup from above has been completed, usage is fairly simple. The sensors you've setup
+will publish state changes to your mqtt server, so any actions you want to be triggered by these changes simply
+need to subscribe to the correct topic.
 
-For example, assuming you have a single door sensor (reed switch, see hardware requirements above) wired to 
+For example, assuming you have a single door sensor (reed switch, see hardware requirements above) wired to
 GPIO 7 & your `configuration.yaml` is set up similar to the following excerpts:
 
 ```

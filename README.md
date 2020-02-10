@@ -32,7 +32,6 @@ should work just as well on any version from the 1B+ through the newest 4B as we
 as the Zero W)
 2. A compatible power supply for the Raspberry Pi ([RaspberryPi.org recommends 5V & 2.5A](https://www.raspberrypi.org/documentation/hardware/raspberrypi/power/README.md))
 2. A 16GB or larger micro SD card ([more here](https://www.raspberrypi.org/documentation/installation/sd-cards.md))
-3. A USB network adapter, either USB to Ethernet (such as [this low-power one from MonoPrice](https://www.monoprice.com/product?c_id=&cp_id=&cs_id=&p_id=9466&sep=1&format=2)),
 or a similar wifi adapter.
 2. Sensors - So far this can be any of the following types
 
@@ -50,6 +49,9 @@ For a more complete and easier to manage (but also more complicated to build) se
 3. Both solid-core & stranded core wiring (solid core is easier for use on a breadboard &
 prototyping board, but doesn't work as well for longer runs to sensor installation
 locations due to it's liklihood to break inside the insulation)
+3. If you're using a Pi Zero (not W), a USB network adapter is needed, either USB to 
+Ethernet (such as 
+[this low-power one from MonoPrice](https://www.monoprice.com/product?c_id=&cp_id=&cs_id=&p_id=9466&sep=1&format=2))
 
 Lastly, if you want a setup that's really easy to place the raspberry pi, you can always look
 into Power Over Ethernet or using a Pi Zero W.

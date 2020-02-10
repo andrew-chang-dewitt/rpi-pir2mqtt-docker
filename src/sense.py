@@ -62,9 +62,16 @@ class App:
             self.__configs.mqtt_host,
             self.__configs.mqtt_port,
             self.__configs.mqtt_user,
-            self.__configs.mqtt_pass).connect()
+            self.__configs.mqtt_pass
+        ).will_set(  # set last will in case of ungraceful exit
+            self.__configs.root_topic + 'fault',
+            Fault(
+                'FAILED',
+                utils.timestamp()
+            ).as_json()
+        ).connect()  # connect & return mqtt helper object
 
-        self.__fault_signal("FAILED")
+        self.__fault_signal("FAILED")  # fault fails until running
 
     def run(self):
         """Run the application."""
@@ -80,7 +87,7 @@ class App:
         self.__gpio.start_listening(__cb)
 
         while not self.__exit:
-            self.__fault_signal("OK")
+            self.__fault_signal("OK")  # fault ok now that GPIO is listening
             time.sleep(600)
 
     def quit(self):

@@ -1,11 +1,13 @@
 import pytest
 
 import factories
-from src.configs import Configs, load_configs
+from src.configs import Configs, ConfigsError, load_configs
 
 CONFIG_CONTENTS = '''
 mqtt_host: "127.0.0.1"
 mqtt_port: 1883
+mqtt_user: "user"
+mqtt_pass: "password"
 root_topic: "/security/sensors/"
 
 sensor_groups:
@@ -38,7 +40,19 @@ def loaded(config_file):
 
 @pytest.fixture
 def configs():
-    return factories.Config.create()
+    return factories.Configs.create()
+
+
+@pytest.fixture
+def no_auth_dict():
+    return {
+        'mqtt_host': '127.0.0.1',
+        'mqtt_port': 1883,
+        'mqtt_user': None,
+        'mqtt_pass': None,
+        'root_topic': '/security/sensors/',
+        'sensor_groups': {},
+    }
 
 
 def test_can_load_configuration_file(loaded):
@@ -48,7 +62,31 @@ def test_can_load_configuration_file(loaded):
 def test_a_loaded_config_file_has_root_attributes(configs):
     assert configs.mqtt_host == "127.0.0.1"
     assert configs.mqtt_port == 1883
+    assert configs.mqtt_user == "user"
+    assert configs.mqtt_pass == "password"
     assert configs.root_topic == "/security/sensors/"
+
+
+def test_a_sensor_doesnt_require_mqtt_user_or_pass(no_auth_dict):
+    no_auth = Configs(no_auth_dict)
+
+    assert no_auth.mqtt_user is None
+    assert no_auth.mqtt_pass is None
+
+
+def test_a_user_must_have_both_user_and_pass_or_neither(no_auth_dict):
+    with pytest.raises(ConfigsError):
+        only_user = no_auth_dict
+        only_user['mqtt_user'] = "user"
+
+        Configs(only_user)
+
+    with pytest.raises(ConfigsError):
+        only_pass = no_auth_dict
+        only_pass['mqtt_pass'] = "password"
+        del only_pass['mqtt_user']
+
+        Configs(only_pass)
 
 
 def test_a_loaded_config_file_loads_all_sensors(configs):

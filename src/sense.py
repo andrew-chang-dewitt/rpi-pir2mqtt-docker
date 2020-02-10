@@ -19,7 +19,7 @@ import signal
 from typing import Callable
 
 from src import utils
-from src.configs import load_configs
+from src.configs import load_configs, ConfigsError
 from src.mqtt import MqttHelper
 from src.gpio import GpioHelper
 from src.events import Event, Fault
@@ -60,7 +60,9 @@ class App:
         # initialize mqtt connection & begin loop
         self.__mqtt = MqttHelper(
             self.__configs.mqtt_host,
-            self.__configs.mqtt_port).connect()
+            self.__configs.mqtt_port,
+            self.__configs.mqtt_user,
+            self.__configs.mqtt_pass).connect()
 
         self.__fault_signal("FAILED")
 
@@ -120,10 +122,17 @@ def error_handler(
     callback  -- a function to call before simply re-raising
                  the original exception
     """
-    utils.log("An unexpected error has occurred, exiting app...")
-    utils.log("Exception data: \n{exception}".format(exception=exception))
-    callback()
-    raise exception
+    expected = (ConfigsError)
+
+    if isinstance(exception, expected):
+        utils.log(exception.msg)
+        utils.log("Exception data: \n{exception}".format(exception=exception))
+        callback()
+    else:
+        utils.log("An unexpected error has occurred, exiting app...")
+        utils.log("Exception data: \n{exception}".format(exception=exception))
+        callback()
+        raise exception
 
 
 def sig_handler(signo: int, _frame) -> None:

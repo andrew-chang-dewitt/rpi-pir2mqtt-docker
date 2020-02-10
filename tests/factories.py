@@ -29,12 +29,14 @@ SENSOR_1 = {
 }
 
 
-class Config:
+class Configs:
     @staticmethod
     def create():
         return ConfigsActual({
             'mqtt_host': '127.0.0.1',
             'mqtt_port': 1883,
+            'mqtt_user': "user",
+            'mqtt_pass': "password",
             'root_topic': '/security/sensors/',
             'sensor_groups': {
                 'example_group': [SENSOR_A, SENSOR_B, ],

@@ -19,7 +19,11 @@ class MqttHelper:
         publish    -- Exposes paho-mqtt's `Client.publish` method directly.
     """
 
-    def __init__(self, host: str, port: int):
+    def __init__(self,
+                 host: str,
+                 port: int,
+                 mqtt_user: str = None,
+                 mqtt_pass: str = None,):
         """Init MqttHelper instance with given host address & port number."""
         # create connection flag for looping
         mqtt.Client.connected_flag = False
@@ -28,6 +32,9 @@ class MqttHelper:
         self.__client.on_connect = self.__on_connect
         self.__mqtt_host = host
         self.__mqtt_port = port
+
+        if mqtt_user is not None and mqtt_pass is not None:
+            self.__client.username_pw_set(mqtt_user, mqtt_pass)
 
     def connect(self) -> 'MqttHelper':
         """Establish an mqtt.Client connection."""

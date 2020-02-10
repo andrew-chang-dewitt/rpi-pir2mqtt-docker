@@ -6,8 +6,6 @@ from src.configs import Configs, ConfigsError, load_configs
 CONFIG_CONTENTS = '''
 mqtt_host: "127.0.0.1"
 mqtt_port: 1883
-mqtt_user: "user"
-mqtt_pass: "password"
 root_topic: "/security/sensors/"
 
 sensor_groups:
@@ -39,27 +37,24 @@ def loaded(config_file):
 
 
 @pytest.fixture
-def configs():
+def configs(monkeypatch):
+    monkeypatch.setenv('MQTT_USER', 'user')
+    monkeypatch.setenv('MQTT_PASS', 'password')
     return factories.Configs.create()
 
 
 @pytest.fixture
-def no_auth_dict():
-    return {
-        'mqtt_host': '127.0.0.1',
-        'mqtt_port': 1883,
-        'mqtt_user': None,
-        'mqtt_pass': None,
-        'root_topic': '/security/sensors/',
-        'sensor_groups': {},
-    }
+def no_auth(monkeypatch):
+    monkeypatch.delenv('MQTT_USER', raising=False)
+    monkeypatch.delenv('MQTT_PASS', raising=False)
+    return factories.Configs.create()
 
 
 def test_can_load_configuration_file(loaded):
     assert isinstance(loaded, Configs)
 
 
-def test_a_loaded_config_file_has_root_attributes(configs):
+def test_a_loaded_config_has_root_attributes(configs):
     assert configs.mqtt_host == "127.0.0.1"
     assert configs.mqtt_port == 1883
     assert configs.mqtt_user == "user"
@@ -67,26 +62,21 @@ def test_a_loaded_config_file_has_root_attributes(configs):
     assert configs.root_topic == "/security/sensors/"
 
 
-def test_a_sensor_doesnt_require_mqtt_user_or_pass(no_auth_dict):
-    no_auth = Configs(no_auth_dict)
-
+def test_a_sensor_doesnt_require_mqtt_user_or_pass(no_auth):
     assert no_auth.mqtt_user is None
     assert no_auth.mqtt_pass is None
 
 
-def test_a_user_must_have_both_user_and_pass_or_neither(no_auth_dict):
+def test_a_user_must_have_both_user_and_pass_or_neither(monkeypatch):
     with pytest.raises(ConfigsError):
-        only_user = no_auth_dict
-        only_user['mqtt_user'] = "user"
-
-        Configs(only_user)
+        monkeypatch.setenv('MQTT_USER', 'user')
+        monkeypatch.delenv('MQTT_PASS', raising=False)
+        factories.Configs.create()
 
     with pytest.raises(ConfigsError):
-        only_pass = no_auth_dict
-        only_pass['mqtt_pass'] = "password"
-        del only_pass['mqtt_user']
-
-        Configs(only_pass)
+        monkeypatch.setenv('MQTT_PASS', 'password')
+        monkeypatch.delenv('MQTT_USER', raising=False)
+        factories.Configs.create()
 
 
 def test_a_loaded_config_file_loads_all_sensors(configs):

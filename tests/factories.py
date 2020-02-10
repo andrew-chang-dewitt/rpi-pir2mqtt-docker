@@ -35,8 +35,6 @@ class Configs:
         return ConfigsActual({
             'mqtt_host': '127.0.0.1',
             'mqtt_port': 1883,
-            'mqtt_user': "user",
-            'mqtt_pass': "password",
             'root_topic': '/security/sensors/',
             'sensor_groups': {
                 'example_group': [SENSOR_A, SENSOR_B, ],

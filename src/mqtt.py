@@ -61,9 +61,13 @@ class MqttHelper:
         self.__client.connected_flag = False
         utils.log("MQTT client disonnected")
 
-    def publish(self, topic: str, payload: str, retain: bool = True):
+    def publish(self, topic: str, payload: str):
         """Exposes paho-mqtt's `Client.publish` method directly."""
-        return self.__client.publish(topic, payload, retain)
+        return self.__client.publish(topic, payload, qos=1, retain=True)
+
+    def will_set(self, topic: str, payload: str):
+        """Exposes paho-mqtt's `Client.will_set` method directly."""
+        return self.__client.will_set(topic, payload, qos=1, retain=True)
 
     def __on_connect(self, client, _userdata, _flags, reason_code):
         if reason_code == 0:

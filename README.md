@@ -72,12 +72,12 @@ then run using
 
 ```
 $ docker run -itd \
-    --name rpi-security
-    --restart always
+    --name rpi-security \
+    --restart always \
     --privileged \
     -v /rpi-security2mqtt/configuration.yaml:/src/configuration.yaml \
-    -e MQTT_USER=your_username_here
-    -e MQTT_PASS=your_password_here
+    -e MQTT_USER=your_username_here \
+    -e MQTT_PASS=your_password_here \
     rpi-security-gpio2mqtt
 ```
 
